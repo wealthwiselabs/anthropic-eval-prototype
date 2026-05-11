@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { travelAgent } from '../data/projects';
 import { clusters } from '../data/clusters';
@@ -6,9 +7,12 @@ import { KPITile } from '../components/KPITile';
 import { ClusterCard } from '../components/ClusterCard';
 import { SessionTable } from '../components/SessionTable';
 import { ProjectShell } from '../components/ProjectShell';
+import { SaveAsTestSetModal } from '../components/SaveAsTestSetModal';
+import type { FailureCluster } from '../types';
 
 export function ProjectHome() {
   const navigate = useNavigate();
+  const [activeCluster, setActiveCluster] = useState<FailureCluster | undefined>();
 
   return (
     <ProjectShell activeTab="overview">
@@ -43,7 +47,7 @@ export function ProjectHome() {
               key={c.id}
               cluster={c}
               onView={() => navigate(`/eval/travel-agent/clusters/${c.id}`)}
-              onSave={() => alert('Save flow lands in Task 3')}
+              onSave={() => setActiveCluster(c)}
             />
           ))}
         </div>
@@ -54,6 +58,12 @@ export function ProjectHome() {
         <h2 className="font-serif text-lg text-ink mb-3">Recent sessions</h2>
         <SessionTable sessions={sessions} limit={20} />
       </section>
+
+      <SaveAsTestSetModal
+        open={!!activeCluster}
+        onClose={() => setActiveCluster(undefined)}
+        sourceCluster={activeCluster}
+      />
     </ProjectShell>
   );
 }

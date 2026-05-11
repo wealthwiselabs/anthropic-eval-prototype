@@ -1,4 +1,5 @@
 import { LineChart, Line, ResponsiveContainer } from 'recharts';
+import { colors } from '../lib/colors';
 
 type Props = {
   label: string;
@@ -20,7 +21,7 @@ export function KPITile({ label, value, sublabel, sparkline }: Props) {
               <Line
                 type="monotone"
                 dataKey="rate"
-                stroke="#D97757"
+                stroke={colors.coral}
                 strokeWidth={2}
                 dot={false}
                 isAnimationActive={false}

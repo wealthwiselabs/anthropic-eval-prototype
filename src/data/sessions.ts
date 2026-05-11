@@ -233,3 +233,16 @@ function buildSessions(): { sessions: Session[]; failureTraceIds: Record<string,
 const built = buildSessions();
 export const sessions: Session[] = built.sessions;
 export const clusterTraceIds = built.failureTraceIds;
+
+// Lookup tables so views can resolve a trace ID back to its trace + parent
+// session without rescanning the whole session list each render.
+export const traceById: Record<string, { trace: Trace; sessionId: string }> = {};
+for (const sess of sessions) {
+  for (const trace of sess.traces) {
+    traceById[trace.id] = { trace, sessionId: sess.id };
+  }
+}
+export const sessionById: Record<string, Session> = {};
+for (const sess of sessions) {
+  sessionById[sess.id] = sess;
+}

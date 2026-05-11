@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import { LeftNav } from './LeftNav';
 import { DisclaimerFooter } from './DisclaimerFooter';
+import { Toast } from './Toast';
 
 // Wraps every route in the Console chrome (left nav + main area + footer).
 // Simpler than the M1 Agent Builder chrome because Evals has no Builder/Wizard
@@ -16,6 +17,7 @@ export function ConsoleChrome({ children }: { children: ReactNode }) {
         <div className="flex-1 min-h-0 flex flex-col">{children}</div>
         <DisclaimerFooter />
       </main>
+      <Toast />
     </div>
   );
 }

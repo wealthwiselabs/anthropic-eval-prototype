@@ -8,15 +8,7 @@ import {
 } from '@tanstack/react-table';
 import type { Session, JudgeDimension, JudgeScore } from '../types';
 import { JudgePill } from './JudgePill';
-
-function relTime(iso: string, now: Date = new Date('2026-05-10T18:00:00Z')): string {
-  const diffMin = Math.max(1, Math.round((now.getTime() - new Date(iso).getTime()) / 60000));
-  if (diffMin < 60) return `${diffMin}m ago`;
-  const h = Math.round(diffMin / 60);
-  if (h < 24) return `${h}h ago`;
-  const d = Math.round(h / 24);
-  return `${d}d ago`;
-}
+import { relTime } from '../lib/time';
 
 function worstVerdictForDim(session: Session, dim: JudgeDimension): JudgeScore['verdict'] {
   const verdicts = session.traces.flatMap((t) => t.scores.filter((s) => s.dimension === dim).map((s) => s.verdict));
