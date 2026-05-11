@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { ConsoleChrome } from './components/ConsoleChrome';
 import { ProjectList } from './views/ProjectList';
 import { ProjectHome } from './views/ProjectHome';
+import { SessionList } from './views/SessionList';
 import { SessionDetail } from './views/SessionDetail';
 import { ClusterList } from './views/ClusterList';
 import { ClusterDetail } from './views/ClusterDetail';
@@ -25,6 +26,7 @@ export default function App() {
           <Route path="/" element={<Navigate to="/eval" replace />} />
           <Route path="/eval" element={<ProjectList />} />
           <Route path="/eval/travel-agent" element={<ProjectHome />} />
+          <Route path="/eval/travel-agent/sessions" element={<SessionList />} />
           <Route path="/eval/travel-agent/sessions/:id" element={<SessionDetail />} />
           <Route path="/eval/travel-agent/clusters" element={<ClusterList />} />
           <Route path="/eval/travel-agent/clusters/:id" element={<ClusterDetail />} />
