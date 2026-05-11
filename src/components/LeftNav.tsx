@@ -1,4 +1,4 @@
-import { NavLink } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom';
 import {
   Wrench,
   Workflow,
@@ -52,7 +52,7 @@ export function LeftNav() {
             Inserted between Build and Managed Agents to signal that Evals
             serves both managed and self-hosted, not a child of either. */}
         <Group icon={<Activity className="w-4 h-4" />} label="Evals" badge="NEW" defaultOpen>
-          <NavRow label="Projects" to="/eval" badge={undefined} linked active />
+          <NavRow label="Projects" to="/eval" linked matchPrefix="/eval" />
           <NavRow label="Judges" to="/eval/travel-agent/judges" linked />
           <NavRow label="Settings" to="/eval/travel-agent/settings" linked />
         </Group>
@@ -136,23 +136,25 @@ function NavRow({
   label,
   to,
   badge,
-  active,
   linked,
+  matchPrefix,
 }: {
   label: string;
   to?: string;
   badge?: string;
-  active?: boolean;
   linked?: boolean;
+  matchPrefix?: string;
 }) {
+  const location = useLocation();
   if (linked && to) {
+    const prefixActive = matchPrefix ? location.pathname.startsWith(matchPrefix) : false;
     return (
       <NavLink
         to={to}
-        end
+        end={!matchPrefix}
         className={({ isActive }) =>
           'flex items-center justify-between px-2 py-1.5 rounded-md transition-colors ' +
-          ((isActive || active)
+          ((isActive || prefixActive)
             ? 'bg-white text-ink shadow-sm'
             : 'text-ink/75 hover:bg-white/60')
         }
