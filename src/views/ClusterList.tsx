@@ -1,14 +1,13 @@
-import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { clusters } from '../data/clusters';
 import { ClusterCard } from '../components/ClusterCard';
 import { ProjectShell } from '../components/ProjectShell';
 import { SaveAsTestSetModal } from '../components/SaveAsTestSetModal';
-import type { FailureCluster } from '../types';
+import { useSaveClusterModal } from '../components/useSaveClusterModal';
 
 export function ClusterList() {
   const navigate = useNavigate();
-  const [activeCluster, setActiveCluster] = useState<FailureCluster | undefined>();
+  const modal = useSaveClusterModal();
 
   return (
     <ProjectShell activeTab="clusters">
@@ -21,17 +20,13 @@ export function ClusterList() {
               key={c.id}
               cluster={c}
               onView={() => navigate(`/eval/travel-agent/clusters/${c.id}`)}
-              onSave={() => setActiveCluster(c)}
+              onSave={() => modal.openWith(c)}
             />
           ))}
         </div>
       </section>
 
-      <SaveAsTestSetModal
-        open={!!activeCluster}
-        onClose={() => setActiveCluster(undefined)}
-        sourceCluster={activeCluster}
-      />
+      <SaveAsTestSetModal open={modal.open} sourceCluster={modal.cluster} onClose={modal.close} />
     </ProjectShell>
   );
 }

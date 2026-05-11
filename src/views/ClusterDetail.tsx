@@ -7,6 +7,7 @@ import { JudgePill } from '../components/JudgePill';
 import { TrendArrow } from '../components/TrendArrow';
 import { TraceCard } from '../components/TraceCard';
 import { SaveAsTestSetModal } from '../components/SaveAsTestSetModal';
+import { useSaveClusterModal } from '../components/useSaveClusterModal';
 import { relTime } from '../lib/time';
 
 type Tab = 'representative' | 'all' | 'reasoning';
@@ -21,7 +22,7 @@ export function ClusterDetail() {
   const { id } = useParams<{ id: string }>();
   const cluster = clusters.find((c) => c.id === id);
   const [tab, setTab] = useState<Tab>('representative');
-  const [saveOpen, setSaveOpen] = useState(false);
+  const modal = useSaveClusterModal();
 
   const exampleTraces = useMemo(() => {
     if (!cluster) return [];
@@ -185,7 +186,7 @@ export function ClusterDetail() {
         {/* Right rail */}
         <aside className="sticky top-6 flex flex-col gap-2">
           <button
-            onClick={() => setSaveOpen(true)}
+            onClick={() => modal.openWith(cluster)}
             className="w-full px-3 py-2 text-sm bg-ink text-white rounded hover:bg-ink/90 transition-colors"
           >
             Save cluster as test set
@@ -205,11 +206,7 @@ export function ClusterDetail() {
         </aside>
       </section>
 
-      <SaveAsTestSetModal
-        open={saveOpen}
-        onClose={() => setSaveOpen(false)}
-        sourceCluster={cluster}
-      />
+      <SaveAsTestSetModal open={modal.open} sourceCluster={modal.cluster} onClose={modal.close} />
     </ProjectShell>
   );
 }

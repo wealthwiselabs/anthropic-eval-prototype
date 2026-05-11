@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { travelAgent } from '../data/projects';
 import { clusters } from '../data/clusters';
@@ -8,11 +7,11 @@ import { ClusterCard } from '../components/ClusterCard';
 import { SessionTable } from '../components/SessionTable';
 import { ProjectShell } from '../components/ProjectShell';
 import { SaveAsTestSetModal } from '../components/SaveAsTestSetModal';
-import type { FailureCluster } from '../types';
+import { useSaveClusterModal } from '../components/useSaveClusterModal';
 
 export function ProjectHome() {
   const navigate = useNavigate();
-  const [activeCluster, setActiveCluster] = useState<FailureCluster | undefined>();
+  const modal = useSaveClusterModal();
 
   return (
     <ProjectShell activeTab="overview">
@@ -47,7 +46,7 @@ export function ProjectHome() {
               key={c.id}
               cluster={c}
               onView={() => navigate(`/eval/travel-agent/clusters/${c.id}`)}
-              onSave={() => setActiveCluster(c)}
+              onSave={() => modal.openWith(c)}
             />
           ))}
         </div>
@@ -59,11 +58,7 @@ export function ProjectHome() {
         <SessionTable sessions={sessions} limit={20} />
       </section>
 
-      <SaveAsTestSetModal
-        open={!!activeCluster}
-        onClose={() => setActiveCluster(undefined)}
-        sourceCluster={activeCluster}
-      />
+      <SaveAsTestSetModal open={modal.open} sourceCluster={modal.cluster} onClose={modal.close} />
     </ProjectShell>
   );
 }

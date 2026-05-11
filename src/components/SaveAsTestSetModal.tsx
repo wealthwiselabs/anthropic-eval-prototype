@@ -59,6 +59,7 @@ export function SaveAsTestSetModal({ open, onClose, sourceCluster }: Props) {
   const [tags, setTags] = useState<string[]>([]);
   const [tagInput, setTagInput] = useState('');
   const [connectToCI, setConnectToCI] = useState(false);
+  const [saving, setSaving] = useState(false);
   const nameInputRef = useRef<HTMLInputElement>(null);
 
   // Reset / hydrate form whenever the modal is (re)opened with a cluster
@@ -69,6 +70,7 @@ export function SaveAsTestSetModal({ open, onClose, sourceCluster }: Props) {
     setTags([]);
     setTagInput('');
     setConnectToCI(false);
+    setSaving(false);
     // Focus name field shortly after the modal appears
     setTimeout(() => nameInputRef.current?.focus(), 0);
   }, [open, sourceCluster, resolvedTraces]);
@@ -117,7 +119,11 @@ export function SaveAsTestSetModal({ open, onClose, sourceCluster }: Props) {
   }
 
   function handleSave() {
+    // Guard against double-click — without this, a fast double-click can fire
+    // addTestSet twice and create two entries before navigation kicks in.
+    if (saving) return;
     if (!name.trim()) return;
+    setSaving(true);
     const newId = `ts_${Date.now()}`;
     const clusterTag = sourceCluster?.title.toLowerCase().split(' ').slice(0, 3).join('-');
     const baseTags = clusterTag ? [clusterTag, ...tags] : tags;
@@ -300,10 +306,10 @@ export function SaveAsTestSetModal({ open, onClose, sourceCluster }: Props) {
           </button>
           <button
             onClick={handleSave}
-            disabled={!name.trim() || totalCount === 0}
+            disabled={!name.trim() || totalCount === 0 || saving}
             className="px-3 py-1.5 text-sm bg-ink text-white rounded hover:bg-ink/90 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
           >
-            Save test set
+            {saving ? 'Saving…' : 'Save test set'}
           </button>
         </div>
       </div>
