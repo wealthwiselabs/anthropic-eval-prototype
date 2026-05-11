@@ -15,6 +15,7 @@ export default {
         ink: '#1F1E1B',
         muted: '#6B6862',
         coral: '#D97757',
+        success: '#3F7A4D',
         node: {
           agent: '#EDF1FA',
           subagent: '#F2EEFB',

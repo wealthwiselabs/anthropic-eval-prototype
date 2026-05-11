@@ -4,6 +4,7 @@ import { X } from 'lucide-react';
 import type { FailureCluster, TestCase, TestSet } from '../types';
 import { traceById } from '../data/sessions';
 import { useStore } from '../store/useStore';
+import { Modal } from './Modal';
 import { YamlSnippet } from './YamlSnippet';
 
 type Props = {
@@ -74,18 +75,6 @@ export function SaveAsTestSetModal({ open, onClose, sourceCluster }: Props) {
     // Focus name field shortly after the modal appears
     setTimeout(() => nameInputRef.current?.focus(), 0);
   }, [open, sourceCluster, resolvedTraces]);
-
-  // Close on Escape
-  useEffect(() => {
-    if (!open) return;
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
-    };
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, [open, onClose]);
-
-  if (!open) return null;
 
   const extraSimilarCount = sourceCluster
     ? Math.max(0, sourceCluster.count - resolvedTraces.length)
@@ -169,14 +158,7 @@ export function SaveAsTestSetModal({ open, onClose, sourceCluster }: Props) {
   }
 
   return (
-    <div
-      className="fixed inset-0 z-40 flex items-center justify-center bg-ink/40 backdrop-blur-sm p-6"
-      onClick={onClose}
-    >
-      <div
-        className="bg-white rounded-xl shadow-xl w-full max-w-[520px] max-h-[90vh] flex flex-col"
-        onClick={(e) => e.stopPropagation()}
-      >
+    <Modal open={open} onClose={onClose} width={520} ariaLabel="Save cluster as test set">
         {/* Header */}
         <div className="flex items-center justify-between px-5 py-4 border-b border-border">
           <h2 className="font-serif text-lg text-ink">Save cluster as test set</h2>
@@ -312,7 +294,6 @@ export function SaveAsTestSetModal({ open, onClose, sourceCluster }: Props) {
             {saving ? 'Saving…' : 'Save test set'}
           </button>
         </div>
-      </div>
-    </div>
+    </Modal>
   );
 }

@@ -167,9 +167,9 @@ function PRMock() {
               Evals · 21/24 passing <span className="text-coral font-mono">(-2 from main)</span>
             </div>
             <div className="text-xs text-muted mt-0.5">
-              <CheckCircle2 className="inline w-3 h-3 mr-1 text-emerald-700" />
+              <CheckCircle2 className="inline w-3 h-3 mr-1 text-success" />
               Build · passing &nbsp;
-              <CheckCircle2 className="inline w-3 h-3 mr-1 text-emerald-700" />
+              <CheckCircle2 className="inline w-3 h-3 mr-1 text-success" />
               Tests · passing
             </div>
           </div>

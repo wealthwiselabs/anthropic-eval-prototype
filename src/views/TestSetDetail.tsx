@@ -6,26 +6,8 @@ import { RunTestSetModal } from '../components/RunTestSetModal';
 import { useStore } from '../store/useStore';
 import { clusters } from '../data/clusters';
 import { relTime } from '../lib/time';
-import type { Run, TestSet } from '../types';
-
-// Compute pass/fail delta against the immediately-prior run for the same test
-// set. Returns null when there's no prior run to compare against.
-function deltaVsPrior(current: Run, all: Run[]): { fixed: number; regressed: number } | null {
-  const priors = all
-    .filter((r) => r.testSetId === current.testSetId && r.ranAt < current.ranAt)
-    .sort((a, b) => (a.ranAt < b.ranAt ? 1 : -1));
-  const prior = priors[0];
-  if (!prior) return null;
-  let fixed = 0;
-  let regressed = 0;
-  for (const cr of current.results) {
-    const pr = prior.results.find((r) => r.caseId === cr.caseId);
-    if (!pr) continue;
-    if (!pr.passed && cr.passed) fixed += 1;
-    if (pr.passed && !cr.passed) regressed += 1;
-  }
-  return { fixed, regressed };
-}
+import { diffCounts, priorRunFor } from '../lib/diff';
+import type { TestSet } from '../types';
 
 function sourceLabelFor(ts: TestSet): string {
   if (ts.source === 'seeded') return 'Seeded';
@@ -200,7 +182,8 @@ export function TestSetDetail() {
               </thead>
               <tbody>
                 {myRuns.map((r) => {
-                  const delta = deltaVsPrior(r, runs);
+                  const prior = priorRunFor(r, runs);
+                  const delta = prior ? diffCounts(r, prior) : null;
                   const total = r.passed + r.failed;
                   const allPass = r.failed === 0;
                   return (
@@ -223,7 +206,7 @@ export function TestSetDetail() {
                         {delta ? (
                           <span className="inline-flex items-center gap-2 font-mono">
                             {delta.fixed > 0 && (
-                              <span className="text-emerald-700">Δ +{delta.fixed}</span>
+                              <span className="text-success">Δ +{delta.fixed}</span>
                             )}
                             {delta.regressed > 0 && (
                               <span className="text-coral">Δ -{delta.regressed}</span>
@@ -253,7 +236,13 @@ export function TestSetDetail() {
         )}
       </section>
 
-      <RunTestSetModal open={runOpen} onClose={() => setRunOpen(false)} testSet={testSet} />
+      {/* key flips on every open → remount discards stale form state without a reset effect */}
+      <RunTestSetModal
+        key={runOpen ? 'open' : 'closed'}
+        open={runOpen}
+        onClose={() => setRunOpen(false)}
+        testSet={testSet}
+      />
     </ProjectShell>
   );
 }

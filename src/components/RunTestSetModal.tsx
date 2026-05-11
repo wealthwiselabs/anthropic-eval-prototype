@@ -1,8 +1,9 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { X } from 'lucide-react';
 import type { Run, RunResult, TestSet } from '../types';
 import { useStore } from '../store/useStore';
+import { Modal } from './Modal';
 
 type Props = {
   open: boolean;
@@ -95,30 +96,11 @@ export function RunTestSetModal({ open, onClose, testSet }: Props) {
   const runsState = useStore((s) => s.runs);
   const showToast = useStore((s) => s.showToast);
 
+  // Form state initializes fresh on each mount; the parent forces remount
+  // (via `key`) whenever the modal re-opens, so we don't need a reset effect.
   const [model, setModel] = useState<ModelChoice>('claude-opus-4-7');
   const [canary, setCanary] = useState(false);
   const [running, setRunning] = useState(false);
-
-  // Reset form whenever the modal (re)opens.
-  useEffect(() => {
-    if (!open) return;
-    setModel('claude-opus-4-7');
-    setCanary(false);
-    setRunning(false);
-  }, [open]);
-
-  // Close on Escape, but only when we're not mid-run (avoids a half-finished
-  // run state where the spinner is up and the user dismisses).
-  useEffect(() => {
-    if (!open) return;
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && !running) onClose();
-    };
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, [open, onClose, running]);
-
-  if (!open) return null;
 
   function startRun() {
     if (running) return;
@@ -165,16 +147,14 @@ export function RunTestSetModal({ open, onClose, testSet }: Props) {
   }
 
   return (
-    <div
-      className="fixed inset-0 z-40 flex items-center justify-center bg-ink/40 backdrop-blur-sm p-6"
-      onClick={() => {
-        if (!running) onClose();
-      }}
+    <Modal
+      open={open}
+      onClose={onClose}
+      width={480}
+      closeOnBackdropClick={!running}
+      closeOnEscape={!running}
+      ariaLabel="Run test set"
     >
-      <div
-        className="bg-white rounded-xl shadow-xl w-full max-w-[480px] flex flex-col"
-        onClick={(e) => e.stopPropagation()}
-      >
         {/* Header */}
         <div className="flex items-center justify-between px-5 py-4 border-b border-border">
           <h2 className="font-serif text-lg text-ink">Run test set</h2>
@@ -252,8 +232,7 @@ export function RunTestSetModal({ open, onClose, testSet }: Props) {
             </div>
           </>
         )}
-      </div>
-    </div>
+    </Modal>
   );
 }
 

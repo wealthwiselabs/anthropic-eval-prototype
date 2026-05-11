@@ -4,7 +4,8 @@ import { ChevronDown, ChevronRight } from 'lucide-react';
 import { ProjectShell } from '../components/ProjectShell';
 import { useStore } from '../store/useStore';
 import { relTime } from '../lib/time';
-import { DiffBadge, diffCounts, diffStatusFor, priorRunFor } from '../components/DiffView';
+import { DiffBadge } from '../components/DiffView';
+import { diffCounts, diffStatusFor, priorRunFor } from '../lib/diff';
 
 export function TestSetRun() {
   const { id, runId } = useParams<{ id: string; runId: string }>();
@@ -110,7 +111,7 @@ export function TestSetRun() {
               <span className="font-mono text-coral">+{counts.regressed} regressed</span>
             )}
             {counts.fixed > 0 && (
-              <span className="font-mono text-emerald-700">+{counts.fixed} fixed</span>
+              <span className="font-mono text-success">+{counts.fixed} fixed</span>
             )}
           </div>
         )}
@@ -249,7 +250,7 @@ function SummaryTile({
   // Reusing the KPITile look without the sparkline. Tone colors the number.
   const numCls =
     tone === 'green'
-      ? 'text-emerald-700'
+      ? 'text-success'
       : tone === 'red'
         ? 'text-coral'
         : 'text-ink';
