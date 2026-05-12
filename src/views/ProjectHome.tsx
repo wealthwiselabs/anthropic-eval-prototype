@@ -18,7 +18,7 @@ export function ProjectHome() {
   return (
     <ProjectShell activeTab="overview">
       {/* Band 2: health KPIs */}
-      <section className="grid grid-cols-6 gap-3">
+      <section className="grid grid-cols-5 gap-3">
         <KPITile
           label="Session pass rate"
           value={`${Math.round(travelAgent.sessionPassRate14d * 100)}%`}
@@ -30,7 +30,6 @@ export function ProjectHome() {
           value={travelAgent.sessions14d.toLocaleString()}
           sublabel="last 14 days"
         />
-        <KPITile label="Active clusters" value={String(travelAgent.clusterCount)} sublabel="needs review" />
         <KPITile
           label="Latency (P95)"
           value={`${(travelAgent.latencyP95Ms14d / 1000).toFixed(1)}s`}
@@ -61,7 +60,9 @@ export function ProjectHome() {
       {/* Band 3: failure clusters */}
       <section>
         <div className="flex items-center justify-between mb-3">
-          <h2 className="font-serif text-lg text-ink">Failure clusters</h2>
+          <h2 className="font-serif text-lg text-ink">
+            Failure clusters <span className="text-muted font-sans text-base">({clusters.length})</span>
+          </h2>
           <NavLink to="/eval/travel-agent/clusters" className="text-sm text-ink/80 hover:text-ink">
             View all →
           </NavLink>
