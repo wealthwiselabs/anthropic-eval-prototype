@@ -74,6 +74,7 @@ export function ProjectHome() {
             <ClusterCard
               key={c.id}
               cluster={c}
+              compact
               onView={() => navigate(`/eval/travel-agent/clusters/${c.id}`)}
               onSave={() => modal.openWith(c)}
             />

@@ -20,18 +20,19 @@ export function SuggestionCard({ suggestion, cluster }: Props) {
 
   return (
     <div className="bg-white border border-border rounded-lg p-5 flex flex-col gap-3">
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2 flex-wrap">
         <span className="text-[10px] uppercase tracking-wide text-muted font-medium">
           Suggestion
         </span>
         {cluster && <JudgePill dimension={cluster.dimension} size="sm" />}
+        <span className="text-[10px] uppercase tracking-wide font-medium px-1.5 py-0.5 rounded bg-success/15 text-success">
+          {suggestion.estimatedFix}
+        </span>
       </div>
 
       <h3 className="font-medium text-base text-ink leading-snug">{suggestion.title}</h3>
 
       <p className="text-sm text-muted leading-relaxed flex-1">{suggestion.body}</p>
-
-      <p className="text-xs italic text-muted leading-relaxed">{suggestion.impactNote}</p>
 
       <div className="flex items-center justify-between gap-2 pt-2">
         {cluster ? (
