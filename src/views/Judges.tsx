@@ -1,6 +1,8 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ProjectShell } from '../components/ProjectShell';
 import { JudgePill } from '../components/JudgePill';
+import { EditJudgeModal } from '../components/EditJudgeModal';
 import { judges } from '../data/judges';
 import type { Judge } from '../types';
 
@@ -21,6 +23,7 @@ const AGREEMENT: Record<string, number> = {
 export function Judges() {
   const fromLibrary = judges.filter((j) => j.source === 'anthropic-default');
   const projectSpecific = judges.filter((j) => j.source === 'goal-specific');
+  const [editJudge, setEditJudge] = useState<Judge | null>(null);
 
   return (
     <ProjectShell activeTab="judges">
@@ -49,10 +52,23 @@ export function Judges() {
         <h2 className="font-serif text-lg text-ink">Project-specific ({projectSpecific.length})</h2>
         <div className="grid grid-cols-2 gap-4">
           {projectSpecific.map((j) => (
-            <ProjectSpecificCard key={j.id} judge={j} agreement={AGREEMENT[j.id] ?? 90} />
+            <ProjectSpecificCard
+              key={j.id}
+              judge={j}
+              agreement={AGREEMENT[j.id] ?? 90}
+              onEdit={() => setEditJudge(j)}
+            />
           ))}
         </div>
       </section>
+
+      {editJudge && (
+        <EditJudgeModal
+          open
+          onClose={() => setEditJudge(null)}
+          judge={editJudge}
+        />
+      )}
     </ProjectShell>
   );
 }
@@ -104,7 +120,15 @@ function FromLibraryCard({ judge, agreement }: { judge: Judge; agreement: number
   );
 }
 
-function ProjectSpecificCard({ judge, agreement }: { judge: Judge; agreement: number }) {
+function ProjectSpecificCard({
+  judge,
+  agreement,
+  onEdit,
+}: {
+  judge: Judge;
+  agreement: number;
+  onEdit: () => void;
+}) {
   return (
     <div className="bg-white border border-border rounded-lg p-5 flex flex-col gap-3">
       <div className="flex items-start justify-between gap-3">
@@ -141,8 +165,8 @@ function ProjectSpecificCard({ judge, agreement }: { judge: Judge; agreement: nu
 
       <div className="flex items-center justify-end pt-2 border-t border-border">
         <button
-          title="Mocked in this prototype"
-          className="px-3 py-1.5 text-sm border border-border bg-white text-ink/70 rounded cursor-default"
+          onClick={onEdit}
+          className="px-3 py-1.5 text-sm border border-border bg-white text-ink/70 rounded hover:bg-canvas transition-colors"
         >
           Edit
         </button>
