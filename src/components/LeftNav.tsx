@@ -55,7 +55,7 @@ export function LeftNav() {
             highlights for the project subtree. */}
         <Group icon={<Activity className="w-4 h-4" />} label="Evals" badge="NEW" defaultOpen>
           <NavRow label="Projects" to="/eval" linked matchPrefix="/eval/travel-agent" exactAlso="/eval" />
-          <NavRow label="Judge library" to="/eval/judges" linked />
+          <NavRow label="LLM Judges" to="/eval/judges" linked />
           <NavRow label="Settings" to="/eval/settings" linked />
         </Group>
 
@@ -159,13 +159,15 @@ function NavRow({
     return (
       <NavLink
         to={to}
-        end={!matchPrefix}
-        className={({ isActive }) =>
-          'flex items-center justify-between px-2 py-1.5 rounded-md transition-colors ' +
-          ((isActive || prefixActive || exactActive)
-            ? 'bg-white text-ink shadow-sm'
-            : 'text-ink/75 hover:bg-white/60')
-        }
+        end
+        className={({ isActive }) => {
+          const explicitActive = prefixActive || exactActive;
+          const active = matchPrefix || exactAlso ? explicitActive : isActive;
+          return (
+            'flex items-center justify-between px-2 py-1.5 rounded-md transition-colors ' +
+            (active ? 'bg-white text-ink shadow-sm' : 'text-ink/75 hover:bg-white/60')
+          );
+        }}
       >
         <span>{label}</span>
         {badge && <Badge>{badge}</Badge>}

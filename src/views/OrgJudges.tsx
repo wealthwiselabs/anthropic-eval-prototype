@@ -22,7 +22,7 @@ export function OrgJudges() {
     <div className="p-8 max-w-[1280px] w-full mx-auto flex flex-col gap-8">
       <section className="flex items-start justify-between gap-4">
         <div>
-          <h1 className="font-serif text-2xl text-ink">Judge library</h1>
+          <h1 className="font-serif text-2xl text-ink">LLM Judges</h1>
           <p className="text-sm text-muted mt-1 max-w-2xl">
             Reusable judges across all eval projects in this org.
           </p>
@@ -75,11 +75,11 @@ function DefaultJudgeCard({ judge, usedIn }: { judge: Judge; usedIn: number }) {
             </span>
           </div>
           <div className="mt-1.5">
-            {/* Coral badge distinguishes "Anthropic-curated" from the NEW badge
-                in the nav (also coral but smaller) — uses the same accent to
-                signal first-party authorship. */}
+            {/* Coral badge signals first-party authorship — frames Anthropic as
+                the provider/publisher (same language used by dev tool catalogs
+                like npm/VSCode) rather than the softer "curated". */}
             <span className="text-[10px] uppercase tracking-wide font-medium px-1.5 py-0.5 rounded bg-coral/15 text-coral">
-              Anthropic-curated
+              Provider: Anthropic
             </span>
           </div>
         </div>

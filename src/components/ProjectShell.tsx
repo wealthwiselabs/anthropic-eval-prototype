@@ -11,7 +11,7 @@ const TABS: { label: string; to: string; tab: ProjectTab; end?: boolean }[] = [
   { label: 'Clusters', to: '/eval/travel-agent/clusters', tab: 'clusters' },
   { label: 'Test sets', to: '/eval/travel-agent/test-sets', tab: 'test-sets' },
   { label: 'CI', to: '/eval/travel-agent/ci', tab: 'ci' },
-  { label: 'Judges', to: '/eval/travel-agent/judges', tab: 'judges' },
+  { label: 'LLM Judges', to: '/eval/travel-agent/judges', tab: 'judges' },
   { label: 'Settings', to: '/eval/travel-agent/settings', tab: 'settings' },
 ];
 

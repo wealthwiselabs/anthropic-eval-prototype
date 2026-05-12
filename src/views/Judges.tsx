@@ -25,11 +25,11 @@ export function Judges() {
   return (
     <ProjectShell activeTab="judges">
       <section>
-        <h1 className="font-serif text-2xl text-ink">Judges for travel-agent</h1>
+        <h1 className="font-serif text-2xl text-ink">LLM Judges for travel-agent</h1>
         <p className="text-sm text-muted mt-1 max-w-2xl">
           Judges active for this project. Manage the org library at{' '}
           <Link to="/eval/judges" className="text-coral hover:underline">
-            Judge library
+            LLM Judges
           </Link>
           .
         </p>
