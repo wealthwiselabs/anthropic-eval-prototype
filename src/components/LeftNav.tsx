@@ -165,7 +165,7 @@ function NavRow({
           const active = matchPrefix || exactAlso ? explicitActive : isActive;
           return (
             'flex items-center justify-between px-2 py-1.5 rounded-md transition-colors ' +
-            (active ? 'bg-white text-ink shadow-sm' : 'text-ink/75 hover:bg-white/60')
+            (active ? 'bg-border/70 text-ink' : 'text-ink/75 hover:bg-border/40')
           );
         }}
       >
