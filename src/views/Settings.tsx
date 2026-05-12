@@ -93,7 +93,7 @@ export function Settings() {
       {/* Card 1: Eval ingestion */}
       <section className="bg-white border border-border rounded-lg p-5">
         <h2 className="font-serif text-lg text-ink">Eval ingestion</h2>
-        <p className="text-sm text-muted mt-1 max-w-2xl">
+        <p className="text-sm text-muted mt-1">
           Turn this on to start sampling prod traffic and running the default judge bundle.
           Turning it off pauses ingestion immediately; existing data is retained.
         </p>
@@ -141,14 +141,14 @@ export function Settings() {
       {/* Card 2: Sampling */}
       <section className="bg-white border border-border rounded-lg p-5">
         <h2 className="font-serif text-lg text-ink">Sampling</h2>
-        <p className="text-sm text-muted mt-1 max-w-2xl">
+        <p className="text-sm text-muted mt-1">
           Judges run asynchronously within seconds of each sampled trace — no schedule needed.
           Adjust sampling rate and filters to control coverage and cost.{' '}
           <Link to="/eval/settings" className="text-coral hover:underline font-medium">
             Adjust at org level →
           </Link>
         </p>
-        <div className="mt-4 flex flex-col gap-2 max-w-md">
+        <div className="mt-4 flex flex-col gap-2">
           <div className="flex items-center justify-between text-xs text-muted">
             <span>Current sample rate</span>
             <span className="font-mono text-ink">100%</span>
@@ -172,7 +172,7 @@ export function Settings() {
         <div className="flex items-center justify-between gap-4">
           <div>
             <h2 className="font-serif text-lg text-ink">Agent type</h2>
-            <p className="text-sm text-muted mt-1 max-w-2xl">
+            <p className="text-sm text-muted mt-1">
               {agentType ? AGENT_TYPE_LABELS[agentType] : 'Not set'} · Set during onboarding. Drives
               which goal-specific judges run on this project's traces.
             </p>
@@ -189,11 +189,11 @@ export function Settings() {
       {/* Card 4: Metadata schema */}
       <section className="bg-white border border-border rounded-lg p-5">
         <h2 className="font-serif text-lg text-ink">Metadata schema</h2>
-        <p className="text-sm text-muted mt-1 max-w-2xl">
+        <p className="text-sm text-muted mt-1">
           Pass these fields with every Messages call so we can group traces into sessions and
           attribute clusters to the right cohort. For Managed Agents this is wired up automatically.
         </p>
-        <div className="mt-3 max-w-2xl">
+        <div className="mt-3">
           <CopyableSnippet code={SDK_SNIPPET} />
         </div>
       </section>
@@ -201,7 +201,7 @@ export function Settings() {
       {/* Card 5: Retention */}
       <section className="bg-white border border-border rounded-lg p-5">
         <h2 className="font-serif text-lg text-ink">Retention</h2>
-        <p className="text-sm text-muted mt-1 max-w-2xl">
+        <p className="text-sm text-muted mt-1">
           Trace bodies are retained for this long. Judge scores and clusters are retained
           indefinitely so historical regression baselines never expire.
         </p>

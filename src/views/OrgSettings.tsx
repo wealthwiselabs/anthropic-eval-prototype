@@ -42,7 +42,7 @@ export function OrgSettings() {
     <div className="p-8 max-w-[1280px] w-full mx-auto flex flex-col gap-6">
       <section>
         <h1 className="font-serif text-2xl text-ink">Org settings</h1>
-        <p className="text-sm text-muted mt-1 max-w-2xl">
+        <p className="text-sm text-muted mt-1">
           Org-wide controls for Evals: master kill switch, default policies, CI tokens, and billing.
         </p>
       </section>
@@ -50,7 +50,7 @@ export function OrgSettings() {
       {/* Card 1: Evals platform — master kill switch */}
       <section className="bg-white border border-border rounded-lg p-5">
         <h2 className="font-serif text-lg text-ink">Evals platform</h2>
-        <p className="text-sm text-muted mt-1 max-w-2xl">
+        <p className="text-sm text-muted mt-1">
           Master switch for the entire org. When off, no project samples traffic — existing data is retained.
         </p>
         <div className="mt-4 flex items-center gap-4">
@@ -90,7 +90,7 @@ export function OrgSettings() {
         <div className="flex items-start justify-between gap-4">
           <div>
             <h2 className="font-serif text-lg text-ink">Default sampling policy</h2>
-            <p className="text-sm text-muted mt-1 max-w-2xl">
+            <p className="text-sm text-muted mt-1">
               Judges run asynchronously within seconds of each sampled trace — no schedule needed.
               We auto-tune sample rate per project to keep judge cost under{' '}
               <span className="font-medium text-ink">5% of API spend</span>. Low-volume projects sample at 100%.
@@ -108,7 +108,7 @@ export function OrgSettings() {
       {/* Card 3: Default retention */}
       <section className="bg-white border border-border rounded-lg p-5">
         <h2 className="font-serif text-lg text-ink">Default retention</h2>
-        <p className="text-sm text-muted mt-1 max-w-2xl">
+        <p className="text-sm text-muted mt-1">
           Trace bodies retention default for new projects. Projects can override this per-project.
         </p>
         <div className="mt-4 inline-flex p-0.5 bg-canvas border border-border rounded gap-0.5 w-fit">
@@ -137,7 +137,7 @@ export function OrgSettings() {
         <div className="flex items-center justify-between gap-4">
           <div>
             <h2 className="font-serif text-lg text-ink">CI tokens</h2>
-            <p className="text-sm text-muted mt-1 max-w-2xl">
+            <p className="text-sm text-muted mt-1">
               Org-wide tokens that authorize the GitHub Action and CLI to fetch test sets and post run results.
             </p>
           </div>
@@ -184,7 +184,7 @@ export function OrgSettings() {
         <div className="flex items-start justify-between gap-4">
           <div>
             <h2 className="font-serif text-lg text-ink">Data policy</h2>
-            <p className="text-sm text-muted mt-1 max-w-2xl">
+            <p className="text-sm text-muted mt-1">
               How we handle trace data on your behalf.
             </p>
           </div>
@@ -208,7 +208,7 @@ export function OrgSettings() {
         <div className="flex items-start justify-between gap-4">
           <div>
             <h2 className="font-serif text-lg text-ink">Eval billing</h2>
-            <p className="text-sm text-muted mt-1 max-w-2xl">
+            <p className="text-sm text-muted mt-1">
               Org-wide judge spend rolls up across projects. Capped by the default sampling policy.
             </p>
           </div>
@@ -219,7 +219,7 @@ export function OrgSettings() {
             View invoice
           </button>
         </div>
-        <div className="mt-4 grid grid-cols-2 gap-4 max-w-xl">
+        <div className="mt-4 grid grid-cols-2 gap-4">
           <KPITile label="Eval cost MTD (all projects)" value="$4.20" sublabel="May 1 → today" />
           <KPITile label="vs. API spend" value="5%" sublabel="under 5% policy cap" />
         </div>
