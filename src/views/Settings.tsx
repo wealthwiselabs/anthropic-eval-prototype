@@ -1,11 +1,12 @@
 import { useState } from 'react';
-import { Check, Copy, X } from 'lucide-react';
+import { Check, Copy, X, AlertTriangle } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { ProjectShell } from '../components/ProjectShell';
 import { Modal } from '../components/Modal';
 import { OnboardingWizard } from '../components/OnboardingWizard';
 import { YamlSnippet } from '../components/YamlSnippet';
 import { useStore } from '../store/useStore';
-import type { RetentionDays } from '../store/useStore';
+import type { RetentionDays, AgentType } from '../store/useStore';
 
 // Static SDK snippet — the canonical metadata pattern we recommend developers
 // pass into every Messages.create call so we can stitch traces into sessions.
@@ -21,18 +22,31 @@ const SDK_SNIPPET = `client.messages.create({
 
 const RETENTION_OPTIONS: RetentionDays[] = [30, 90, 180];
 
+const AGENT_TYPE_LABELS: Record<AgentType, string> = {
+  support: 'Support',
+  code: 'Code assistant',
+  rag: 'RAG / Q&A',
+  travel: 'Travel',
+  other: 'Other',
+};
+
 export function Settings() {
   const evalEnabled = useStore((s) => s.evalEnabled);
   const setEvalEnabled = useStore((s) => s.setEvalEnabled);
+  const agentType = useStore((s) => s.agentType);
   const setAgentType = useStore((s) => s.setAgentType);
   const retentionDays = useStore((s) => s.retentionDays);
   const setRetentionDays = useStore((s) => s.setRetentionDays);
+  const orgEvalEnabled = useStore((s) => s.orgEvalEnabled);
+  const orgDefaultRetentionDays = useStore((s) => s.orgDefaultRetentionDays);
   const showToast = useStore((s) => s.showToast);
 
   const [wizardOpen, setWizardOpen] = useState(false);
   const [confirmOffOpen, setConfirmOffOpen] = useState(false);
 
   function handleToggle() {
+    // Toggle is disabled when org-wide Evals is OFF, so this only fires when
+    // the org switch is on. The OFF→ON path still launches the wizard.
     if (evalEnabled) {
       setConfirmOffOpen(true);
     } else {
@@ -46,14 +60,35 @@ export function Settings() {
     showToast('Evals ingestion turned off');
   }
 
+  const retentionMatchesOrg = retentionDays === orgDefaultRetentionDays;
+  const toggleDisabled = !orgEvalEnabled;
+
   return (
     <ProjectShell activeTab="settings">
       <section>
-        <h1 className="font-serif text-2xl text-ink">Settings</h1>
+        <h1 className="font-serif text-2xl text-ink">travel-agent settings</h1>
         <p className="text-sm text-muted mt-1">
-          Control ingestion, sampling, metadata, retention, and CI access for this project.
+          Project-level overrides. Org defaults are managed in{' '}
+          <Link to="/eval/settings" className="text-coral hover:underline">
+            Org Settings
+          </Link>
+          .
         </p>
       </section>
+
+      {/* Banner: only when org-wide Evals is OFF — explains why the toggle below is disabled. */}
+      {!orgEvalEnabled && (
+        <section className="bg-coral/10 border border-coral/30 rounded-lg p-4 flex items-start gap-3">
+          <AlertTriangle className="w-5 h-5 text-coral flex-shrink-0 mt-0.5" />
+          <div className="text-sm text-ink/85 leading-relaxed">
+            Org-wide Evals is OFF. Re-enable in{' '}
+            <Link to="/eval/settings" className="text-coral hover:underline font-medium">
+              Org Settings
+            </Link>{' '}
+            to sample this project.
+          </div>
+        </section>
+      )}
 
       {/* Card 1: Eval ingestion */}
       <section className="bg-white border border-border rounded-lg p-5">
@@ -65,10 +100,13 @@ export function Settings() {
         <div className="mt-4 flex items-center gap-4">
           <button
             onClick={handleToggle}
+            disabled={toggleDisabled}
+            title={toggleDisabled ? 'Org-wide Evals is OFF' : undefined}
             role="switch"
             aria-checked={evalEnabled}
             className={
               'relative inline-flex h-7 w-12 items-center rounded-full transition-colors ' +
+              (toggleDisabled ? 'opacity-50 cursor-not-allowed ' : '') +
               (evalEnabled ? 'bg-coral' : 'bg-border')
             }
           >
@@ -83,14 +121,18 @@ export function Settings() {
             <span
               className={
                 'inline-block w-2 h-2 rounded-full ' +
-                (evalEnabled ? 'bg-success' : 'bg-muted/50')
+                (evalEnabled && orgEvalEnabled ? 'bg-success' : 'bg-muted/50')
               }
             />
             <span className="text-ink font-medium">
               {evalEnabled ? 'ON' : 'OFF'}
             </span>
             <span className="text-muted">
-              {evalEnabled ? '· Sampling traffic' : '· Not sampling'}
+              {evalEnabled
+                ? orgEvalEnabled
+                  ? '· Sampling traffic'
+                  : '· Paused (org switch off)'
+                : '· Not sampling'}
             </span>
           </div>
         </div>
@@ -100,9 +142,10 @@ export function Settings() {
       <section className="bg-white border border-border rounded-lg p-5">
         <h2 className="font-serif text-lg text-ink">Sampling</h2>
         <p className="text-sm text-muted mt-1 max-w-2xl">
-          Adaptive sampling. Your project is at <span className="font-mono text-ink">100%</span>{' '}
-          sampling today (low volume). As traffic grows, we automatically scale sampling down to
-          keep judge cost under 5% of base API spend.
+          Inherits org default policy: adaptive, capped at 5% of API spend.{' '}
+          <Link to="/eval/settings" className="text-coral hover:underline font-medium">
+            Adjust at org level →
+          </Link>
         </p>
         <div className="mt-4 flex flex-col gap-2 max-w-md">
           <div className="flex items-center justify-between text-xs text-muted">
@@ -122,7 +165,27 @@ export function Settings() {
         </div>
       </section>
 
-      {/* Card 3: Metadata schema */}
+      {/* Card 3: Agent type — wizard output, lives at project level since each
+          project chooses its own goal-specific judge bundle. */}
+      <section className="bg-white border border-border rounded-lg p-5">
+        <div className="flex items-center justify-between gap-4">
+          <div>
+            <h2 className="font-serif text-lg text-ink">Agent type</h2>
+            <p className="text-sm text-muted mt-1 max-w-2xl">
+              {agentType ? AGENT_TYPE_LABELS[agentType] : 'Not set'} · Set during onboarding. Drives
+              which goal-specific judges run on this project's traces.
+            </p>
+          </div>
+          <button
+            title="Mocked in this prototype"
+            className="px-3 py-1.5 text-sm border border-border bg-white text-ink/70 rounded cursor-default flex-shrink-0"
+          >
+            Re-run wizard
+          </button>
+        </div>
+      </section>
+
+      {/* Card 4: Metadata schema */}
       <section className="bg-white border border-border rounded-lg p-5">
         <h2 className="font-serif text-lg text-ink">Metadata schema</h2>
         <p className="text-sm text-muted mt-1 max-w-2xl">
@@ -134,7 +197,7 @@ export function Settings() {
         </div>
       </section>
 
-      {/* Card 4: Retention */}
+      {/* Card 5: Retention */}
       <section className="bg-white border border-border rounded-lg p-5">
         <h2 className="font-serif text-lg text-ink">Retention</h2>
         <p className="text-sm text-muted mt-1 max-w-2xl">
@@ -156,57 +219,19 @@ export function Settings() {
                 }
               >
                 {d} days
-                {d === 30 && <span className="text-xs text-muted ml-1">(default)</span>}
               </button>
             );
           })}
         </div>
-      </section>
-
-      {/* Card 5: CI tokens */}
-      <section className="bg-white border border-border rounded-lg p-5">
-        <div className="flex items-center justify-between gap-4">
-          <div>
-            <h2 className="font-serif text-lg text-ink">CI tokens</h2>
-            <p className="text-sm text-muted mt-1 max-w-2xl">
-              Tokens authorize the GitHub Action and CLI to fetch test sets and post run results.
-            </p>
-          </div>
-          <button
-            title="Mocked in this prototype"
-            className="px-3 py-1.5 text-sm border border-border bg-white text-ink/70 rounded cursor-default flex-shrink-0"
-          >
-            Generate token
-          </button>
-        </div>
-        <div className="mt-4 border border-border rounded overflow-hidden">
-          <table className="w-full text-sm">
-            <thead className="bg-chrome text-xs uppercase tracking-wide text-muted">
-              <tr>
-                <th className="text-left font-medium px-3 py-2">Name</th>
-                <th className="text-left font-medium px-3 py-2">Created</th>
-                <th className="text-left font-medium px-3 py-2">Last used</th>
-                <th className="text-left font-medium px-3 py-2">Scopes</th>
-                <th className="text-right font-medium px-3 py-2">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr className="border-t border-border">
-                <td className="px-3 py-2 font-mono text-ink">default-prod-token</td>
-                <td className="px-3 py-2 text-muted">7 days ago</td>
-                <td className="px-3 py-2 text-muted">2 hours ago</td>
-                <td className="px-3 py-2 text-muted font-mono text-xs">read, run</td>
-                <td className="px-3 py-2 text-right">
-                  <button
-                    title="Mocked in this prototype"
-                    className="text-xs text-coral hover:underline cursor-default"
-                  >
-                    Revoke
-                  </button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+        <div className="mt-3 text-xs text-muted">
+          {retentionMatchesOrg ? (
+            <>Using org default.</>
+          ) : (
+            <>
+              Using <span className="font-medium text-ink">{retentionDays} days</span> for this project.
+              Org default is <span className="font-medium text-ink">{orgDefaultRetentionDays} days</span>.
+            </>
+          )}
         </div>
       </section>
 

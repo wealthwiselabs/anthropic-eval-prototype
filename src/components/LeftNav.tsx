@@ -50,11 +50,13 @@ export function LeftNav() {
 
         {/* Evals — the new top-level group introduced by this prototype.
             Inserted between Build and Managed Agents to signal that Evals
-            serves both managed and self-hosted, not a child of either. */}
+            serves both managed and self-hosted, not a child of either.
+            Judge library and Settings are org-level surfaces; Projects
+            highlights for the project subtree. */}
         <Group icon={<Activity className="w-4 h-4" />} label="Evals" badge="NEW" defaultOpen>
-          <NavRow label="Projects" to="/eval" linked matchPrefix="/eval" />
-          <NavRow label="Judges" to="/eval/travel-agent/judges" linked />
-          <NavRow label="Settings" to="/eval/travel-agent/settings" linked />
+          <NavRow label="Projects" to="/eval" linked matchPrefix="/eval/travel-agent" exactAlso="/eval" />
+          <NavRow label="Judge library" to="/eval/judges" linked />
+          <NavRow label="Settings" to="/eval/settings" linked />
         </Group>
 
         <Group icon={<Workflow className="w-4 h-4" />} label="Managed Agents">
@@ -138,23 +140,29 @@ function NavRow({
   badge,
   linked,
   matchPrefix,
+  exactAlso,
 }: {
   label: string;
   to?: string;
   badge?: string;
   linked?: boolean;
   matchPrefix?: string;
+  // Path that should also activate this row via exact match — used by Projects
+  // so it lights up on `/eval` exact AND any `/eval/travel-agent/*` path, but
+  // NOT on org-level `/eval/judges` or `/eval/settings`.
+  exactAlso?: string;
 }) {
   const location = useLocation();
   if (linked && to) {
     const prefixActive = matchPrefix ? location.pathname.startsWith(matchPrefix) : false;
+    const exactActive = exactAlso ? location.pathname === exactAlso : false;
     return (
       <NavLink
         to={to}
         end={!matchPrefix}
         className={({ isActive }) =>
           'flex items-center justify-between px-2 py-1.5 rounded-md transition-colors ' +
-          ((isActive || prefixActive)
+          ((isActive || prefixActive || exactActive)
             ? 'bg-white text-ink shadow-sm'
             : 'text-ink/75 hover:bg-white/60')
         }

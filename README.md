@@ -20,6 +20,7 @@ npm run build  # static bundle in dist/
 - **Compare to previous run.** Diff view computed from the actual stored runs.
 - **Settings toggle + onboarding wizard.** The 3-step wizard writes `evalEnabled` and `agentType` to the store; the toggle reflects that state.
 - **Retention selector.** Writes `retentionDays` to the store.
+- **Org vs. project split.** Judges and Settings exist at two levels: an org-level Judge library and Org Settings (master kill switch, default retention/sampling, CI tokens, billing) at `/eval/judges` and `/eval/settings`, plus per-project Judges and Settings under `/eval/travel-agent/*` for the project-scoped overrides.
 
 **Seeded, read-only (looks live, isn't):**
 - KPIs, sparkline, cost figures, sampling chart
@@ -28,7 +29,7 @@ npm run build  # static bundle in dist/
 - The 2 pre-seeded test sets and their prior runs (used for diff baseline)
 - The 4 judges on the Judges page (no judge prompts are editable in v1)
 - The CI page YAML snippet, CLI snippet, and PR-comment screenshot
-- The CI tokens table on Settings
+- The CI tokens table on Org Settings
 
 **Inert with "Mocked in this prototype" tooltip:**
 - Workspace switcher, credits, avatar

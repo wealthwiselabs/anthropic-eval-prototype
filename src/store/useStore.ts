@@ -24,11 +24,16 @@ type Store = {
   testSets: TestSet[];
   runs: Run[];
   toast: ToastState;
-  // Eval settings — prototype starts in the "ON, populated with data" state
-  // so a reviewer landing on /eval sees the dashboard light up immediately.
+  // Eval settings split into org-level and project-level. Project-level fields
+  // (evalEnabled, retentionDays) represent per-project overrides; org-level
+  // fields (orgEvalEnabled, orgDefaultRetentionDays) are the catalog/default
+  // surfaces. Prototype starts ON with data populated so reviewers see the
+  // dashboard light up immediately.
   evalEnabled: boolean;
   agentType: AgentType | null;
   retentionDays: RetentionDays;
+  orgEvalEnabled: boolean;
+  orgDefaultRetentionDays: RetentionDays;
   addTestSet: (testSet: TestSet) => void;
   addRun: (run: Run) => void;
   showToast: (message: string, action?: { label: string; to: string }) => void;
@@ -36,6 +41,8 @@ type Store = {
   setEvalEnabled: (enabled: boolean) => void;
   setAgentType: (type: AgentType) => void;
   setRetentionDays: (days: RetentionDays) => void;
+  setOrgEvalEnabled: (enabled: boolean) => void;
+  setOrgDefaultRetentionDays: (days: RetentionDays) => void;
 };
 
 export const useStore = create<Store>((set) => ({
@@ -45,6 +52,8 @@ export const useStore = create<Store>((set) => ({
   evalEnabled: true,
   agentType: 'travel',
   retentionDays: 30,
+  orgEvalEnabled: true,
+  orgDefaultRetentionDays: 30,
   addTestSet: (testSet) => set((s) => ({ testSets: [testSet, ...s.testSets] })),
   addRun: (run) => set((s) => ({ runs: [run, ...s.runs] })),
   showToast: (message, action) =>
@@ -60,4 +69,6 @@ export const useStore = create<Store>((set) => ({
   setEvalEnabled: (enabled) => set({ evalEnabled: enabled }),
   setAgentType: (type) => set({ agentType: type }),
   setRetentionDays: (days) => set({ retentionDays: days }),
+  setOrgEvalEnabled: (enabled) => set({ orgEvalEnabled: enabled }),
+  setOrgDefaultRetentionDays: (days) => set({ orgDefaultRetentionDays: days }),
 }));

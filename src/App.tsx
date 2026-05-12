@@ -12,6 +12,8 @@ import { TestSetRun } from './views/TestSetRun';
 import { CIIntegration } from './views/CIIntegration';
 import { Judges } from './views/Judges';
 import { Settings } from './views/Settings';
+import { OrgJudges } from './views/OrgJudges';
+import { OrgSettings } from './views/OrgSettings';
 
 // BASE_URL is set by Vite from vite.config.ts. In dev it's '/'; in production
 // build it's '/anthropic-eval-prototype/'. Strip the trailing slash so React
@@ -25,6 +27,8 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Navigate to="/eval" replace />} />
           <Route path="/eval" element={<ProjectList />} />
+          <Route path="/eval/judges" element={<OrgJudges />} />
+          <Route path="/eval/settings" element={<OrgSettings />} />
           <Route path="/eval/travel-agent" element={<ProjectHome />} />
           <Route path="/eval/travel-agent/sessions" element={<SessionList />} />
           <Route path="/eval/travel-agent/sessions/:id" element={<SessionDetail />} />
