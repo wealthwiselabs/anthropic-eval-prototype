@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { NavLink, useNavigate } from 'react-router-dom';
+import { NavLink, Link } from 'react-router-dom';
 import { ChevronDown } from 'lucide-react';
 import { travelAgent } from '../data/projects';
 
@@ -20,30 +20,24 @@ type Props = {
 };
 
 export function ProjectShell({ activeTab, children }: Props) {
-  const navigate = useNavigate();
-
   return (
     <div className="flex-1 flex flex-col">
       {/* Band 1: header strip */}
       <div className="border-b border-border bg-chrome">
         <div className="max-w-[1280px] mx-auto px-8 pt-6 pb-0 w-full">
           <div className="flex items-center justify-between gap-4">
-            <div className="flex items-center gap-3">
+            <div className="flex items-baseline gap-2 text-sm">
+              <Link to="/eval" className="text-muted hover:text-ink transition-colors">
+                Projects
+              </Link>
+              <span className="text-muted/60">/</span>
               <h1 className="font-mono text-xl text-ink">{travelAgent.name}</h1>
-              <span className="text-[10px] uppercase tracking-wide bg-coral/15 text-coral font-medium px-1.5 py-0.5 rounded">
+              <span className="text-[10px] uppercase tracking-wide bg-coral/15 text-coral font-medium px-1.5 py-0.5 rounded ml-1">
                 Managed Agent
               </span>
             </div>
             <div className="flex items-center gap-2">
-              <DropdownStub label="Agent" />
               <DropdownStub label="14d" />
-              <button
-                title="Open Test Sets"
-                onClick={() => navigate('/eval/travel-agent/test-sets')}
-                className="px-3 py-1.5 text-sm bg-ink text-white rounded hover:bg-ink/90 transition-colors"
-              >
-                Run test sets
-              </button>
             </div>
           </div>
 
