@@ -13,7 +13,7 @@ type Props = {
   defaultExpanded?: boolean;
 };
 
-const PILL_DIMENSIONS: JudgeDimension[] = ['tool-use', 'safety', 'faithfulness'];
+const PILL_DIMENSIONS: JudgeDimension[] = ['tool-use', 'safety', 'groundedness'];
 
 // Renders a single trace as a card. Used in cluster detail (the hero content)
 // and session detail (one card per turn). Input / output blocks are

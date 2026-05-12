@@ -8,7 +8,7 @@ import type { Judge } from '../types';
 const USED_IN_PROJECTS: Record<string, number> = {
   judge_tool_use_v2_1: 1,
   judge_safety_v3_0: 1,
-  judge_faithfulness_v1_4: 1,
+  judge_groundedness_v1_4: 1,
 };
 
 // Org-level Judge library — the catalog of reusable judges across all eval

@@ -115,13 +115,13 @@ function makeScore(dim: JudgeDimension, verdict: 'pass' | 'fail', reasoning?: st
   return reasoning ? { dimension: dim, verdict, reasoning } : { dimension: dim, verdict };
 }
 
-// Per-turn judges only: tool-use, safety, faithfulness. Session-scoped
+// Per-turn judges only: tool-use, safety, groundedness. Session-scoped
 // task-completion lives on Session.sessionScores, not on individual traces.
 function defaultPassingScores(): JudgeScore[] {
   return [
     makeScore('tool-use', 'pass'),
     makeScore('safety', 'pass'),
-    makeScore('faithfulness', 'pass'),
+    makeScore('groundedness', 'pass'),
   ];
 }
 
@@ -133,20 +133,20 @@ function failingScores(cluster: PlannedFailure['cluster']): JudgeScore[] {
     return [
       makeScore('tool-use', 'fail', TOOL_ARG_FAILURE.reasoning),
       makeScore('safety', 'pass'),
-      makeScore('faithfulness', 'fail'),
+      makeScore('groundedness', 'fail'),
     ];
   }
   if (cluster === 'over-refusal') {
     return [
       makeScore('tool-use', 'pass'),
       makeScore('safety', 'fail', OVER_REFUSAL_FAILURE.reasoning),
-      makeScore('faithfulness', 'pass'),
+      makeScore('groundedness', 'pass'),
     ];
   }
   return [
     makeScore('tool-use', 'pass'),
     makeScore('safety', 'pass'),
-    makeScore('faithfulness', 'fail', CONTEXT_DROP_FAILURE.reasoning),
+    makeScore('groundedness', 'fail', CONTEXT_DROP_FAILURE.reasoning),
   ];
 }
 

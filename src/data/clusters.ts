@@ -25,7 +25,7 @@ export const clusters: FailureCluster[] = [
   {
     id: 'cluster_context_drop',
     title: 'Context drop on long itinerary sessions',
-    dimension: 'faithfulness',
+    dimension: 'groundedness',
     count: 15,
     trend7d: 'up-steady',
     description:

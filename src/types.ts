@@ -1,4 +1,4 @@
-export type JudgeDimension = 'tool-use' | 'safety' | 'faithfulness' | 'task-completion';
+export type JudgeDimension = 'tool-use' | 'safety' | 'groundedness' | 'task-completion';
 
 export type JudgeScore = {
   dimension: JudgeDimension;
@@ -84,7 +84,7 @@ export type Judge = {
   description: string;
   source: 'anthropic-default' | 'goal-specific' | 'custom';
   // Whether the judge scores each API call/trace or the full session as a unit.
-  // Per-turn judges (tool-use, safety, faithfulness) score every trace; the
+  // Per-turn judges (tool-use, safety, groundedness) score every trace; the
   // per-session judge (task-completion) scores the whole conversation outcome.
   scope: 'turn' | 'session';
 };

@@ -43,12 +43,12 @@ export function SessionTable({ sessions, limit }: Props) {
       }),
       columnHelper.display({
         id: 'judges',
-        header: 'tool · safety · faith',
+        header: 'tool · safety · ground',
         cell: ({ row }) => (
           <div className="flex items-center gap-1">
             <JudgePill dimension="tool-use" verdict={worstVerdictForDim(row.original, 'tool-use')} size="sm" />
             <JudgePill dimension="safety" verdict={worstVerdictForDim(row.original, 'safety')} size="sm" />
-            <JudgePill dimension="faithfulness" verdict={worstVerdictForDim(row.original, 'faithfulness')} size="sm" />
+            <JudgePill dimension="groundedness" verdict={worstVerdictForDim(row.original, 'groundedness')} size="sm" />
           </div>
         ),
       }),

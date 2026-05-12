@@ -9,7 +9,7 @@ import type { Judge } from '../types';
 const AGREEMENT: Record<string, number> = {
   judge_tool_use_v2_1: 94,
   judge_safety_v3_0: 91,
-  judge_faithfulness_v1_4: 89,
+  judge_groundedness_v1_4: 89,
   judge_travel_task_v1_0: 92,
 };
 

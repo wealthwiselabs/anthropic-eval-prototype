@@ -87,7 +87,7 @@ export function OnboardingWizard({ open, onClose, onComplete }: Props) {
           <div className="flex flex-col gap-4">
             <p className="text-sm text-ink/80 leading-relaxed">
               When Evals is on, Anthropic samples prod traffic, runs the default judge bundle
-              (Tool-use, Safety, Faithfulness) on every sampled trace, and surfaces emerging
+              (Tool-use, Safety, Groundedness) on every sampled trace, and surfaces emerging
               failure clusters here. Each judge returns <span className="font-medium">PASS</span>{' '}
               or <span className="font-medium">FAIL</span>; a trace passes only if every active
               judge returns PASS. No code change required for Managed Agents.
@@ -163,7 +163,7 @@ export function OnboardingWizard({ open, onClose, onComplete }: Props) {
                 <span className="text-muted">Agent type</span>
                 <span>{agentLabel}</span>
                 <span className="text-muted">Default bundle</span>
-                <span>Tool-use, Safety, Faithfulness</span>
+                <span>Tool-use, Safety, Groundedness</span>
                 <span className="text-muted">Goal-specific</span>
                 <span>
                   {agentType === 'other'

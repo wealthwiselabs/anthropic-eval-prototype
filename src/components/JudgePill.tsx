@@ -3,7 +3,7 @@ import type { JudgeDimension } from '../types';
 const LABELS: Record<JudgeDimension, string> = {
   'tool-use': 'Tool-use',
   safety: 'Safety',
-  faithfulness: 'Faithful.',
+  groundedness: 'Grounded.',
   'task-completion': 'Task',
 };
 
@@ -14,7 +14,7 @@ const LABELS: Record<JudgeDimension, string> = {
 const DIMENSION_BG: Record<JudgeDimension, string> = {
   'tool-use': 'bg-node-agent text-ink',
   safety: 'bg-node-classify text-ink',
-  faithfulness: 'bg-node-subagent text-ink',
+  groundedness: 'bg-node-subagent text-ink',
   'task-completion': 'bg-node-skill text-ink',
 };
 

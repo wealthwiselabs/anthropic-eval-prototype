@@ -22,12 +22,12 @@ export const judges: Judge[] = [
     scope: 'turn',
   },
   {
-    id: 'judge_faithfulness_v1_4',
-    name: 'Faithfulness',
+    id: 'judge_groundedness_v1_4',
+    name: 'Groundedness',
     version: 'v1.4',
-    dimension: 'faithfulness',
+    dimension: 'groundedness',
     description:
-      'Scores whether the agent stays consistent with prior turns and grounded sources. Flags context drift, contradictions, and hallucinated entities. Returns PASS or FAIL per trace.',
+      "Checks whether the agent's response is grounded in the provided context (conversation history, retrieved documents, tool outputs). Returns PASS or FAIL per trace.",
     source: 'anthropic-default',
     scope: 'turn',
   },
