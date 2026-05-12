@@ -5,20 +5,22 @@
 // override M1_BASE_URL to point at your local M1 dev server (typically
 // http://localhost:5174 when both prototypes run concurrently).
 
-const M1_BASE_URL = 'https://wealthwiselabs.github.io/anthropic-agent-builder-prototype/';
+const M1_BASE_URL = 'https://wealthwiselabs.github.io/anthropic-agent-builder-prototype';
 
 export function agentBuilderUrl(params: {
   suggestion: string;
   cluster: string;
   template: string;
+  prefill: string;
   project?: string;
 }): string {
   const search = new URLSearchParams({
+    template: params.template,
+    prefill: params.prefill,
     from: 'eval',
     suggestion: params.suggestion,
     cluster: params.cluster,
-    template: params.template,
     ...(params.project ? { project: params.project } : {}),
   });
-  return `${M1_BASE_URL}?${search.toString()}`;
+  return `${M1_BASE_URL}/builder?${search.toString()}`;
 }

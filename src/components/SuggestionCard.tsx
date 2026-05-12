@@ -14,6 +14,7 @@ export function SuggestionCard({ suggestion, cluster }: Props) {
     suggestion: suggestion.builderParams.suggestion,
     cluster: suggestion.clusterId,
     template: suggestion.builderParams.template,
+    prefill: suggestion.builderParams.prefill,
     project: 'travel-agent',
   });
 
