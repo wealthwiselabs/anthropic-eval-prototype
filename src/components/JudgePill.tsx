@@ -7,37 +7,42 @@ const LABELS: Record<JudgeDimension, string> = {
   'task-completion': 'Task',
 };
 
-// Tailwind-only color classes per dimension. Keep both bg + text in one token
-// so consumers can't accidentally split them and end up with unreadable pills.
-const BG: Record<JudgeDimension, string> = {
+// Binary judge pill: green = pass, red = fail. No score number — the pill
+// stands alone as the verdict, with the dimension label as the only content.
+// When `verdict` is undefined (catalog/judges pages) the pill renders in a
+// neutral dimension-colored style, used purely as a dimension tag.
+const DIMENSION_BG: Record<JudgeDimension, string> = {
   'tool-use': 'bg-node-agent text-ink',
   safety: 'bg-node-classify text-ink',
   faithfulness: 'bg-node-subagent text-ink',
   'task-completion': 'bg-node-skill text-ink',
 };
 
-const VERDICT_BORDER: Record<NonNullable<JudgePillProps['verdict']>, string> = {
-  pass: 'border-transparent',
-  partial: 'border-coral/40',
-  fail: 'border-coral',
-};
-
 type JudgePillProps = {
   dimension: JudgeDimension;
-  verdict?: 'pass' | 'partial' | 'fail';
+  verdict?: 'pass' | 'fail';
   size?: 'sm' | 'md';
 };
 
 export function JudgePill({ dimension, verdict, size = 'md' }: JudgePillProps) {
   const sizeCls = size === 'sm' ? 'text-[10px] px-1.5 py-0.5' : 'text-xs px-2 py-0.5';
-  const borderCls = verdict ? VERDICT_BORDER[verdict] : 'border-transparent';
+
+  // When a verdict is provided the pill takes a pass/fail color; without one we
+  // fall back to the dimension-tinted neutral style (used in judge catalogs).
+  let bgCls: string;
+  if (verdict === 'pass') {
+    bgCls = 'bg-node-start text-success border-transparent';
+  } else if (verdict === 'fail') {
+    bgCls = 'bg-coral/15 text-coral border-transparent';
+  } else {
+    bgCls = DIMENSION_BG[dimension] + ' border-transparent';
+  }
+
   return (
     <span
       className={
         'inline-flex items-center rounded border font-medium tracking-tight ' +
-        BG[dimension] +
-        ' ' +
-        borderCls +
+        bgCls +
         ' ' +
         sizeCls
       }

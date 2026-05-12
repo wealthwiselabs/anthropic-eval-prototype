@@ -8,26 +8,17 @@ import {
 } from '@tanstack/react-table';
 import type { Session, JudgeDimension, JudgeScore } from '../types';
 import { JudgePill } from './JudgePill';
+import { OverallVerdictPill } from './OverallVerdictPill';
+import { sessionVerdict } from '../lib/verdict';
 import { relTime } from '../lib/time';
 
+// Binary worst-verdict per dimension across all turns of a session: any fail
+// flips the dimension to fail. The per-dimension pill row gives reviewers a
+// at-a-glance breakdown of which judge tripped the overall fail.
 function worstVerdictForDim(session: Session, dim: JudgeDimension): JudgeScore['verdict'] {
   const verdicts = session.traces.flatMap((t) => t.scores.filter((s) => s.dimension === dim).map((s) => s.verdict));
-  if (verdicts.includes('fail')) return 'fail';
-  if (verdicts.includes('partial')) return 'partial';
-  return 'pass';
+  return verdicts.includes('fail') ? 'fail' : 'pass';
 }
-
-const STATUS_LABEL: Record<Session['dominantStatus'], string> = {
-  pass: 'pass',
-  partial: 'partial',
-  fail: 'fail',
-};
-
-const STATUS_CLS: Record<Session['dominantStatus'], string> = {
-  pass: 'text-ink/70',
-  partial: 'text-coral/80',
-  fail: 'text-coral font-medium',
-};
 
 type Props = { sessions: Session[]; limit?: number };
 
@@ -61,9 +52,12 @@ export function SessionTable({ sessions, limit }: Props) {
           </div>
         ),
       }),
-      columnHelper.accessor('dominantStatus', {
+      columnHelper.display({
+        id: 'status',
         header: 'status',
-        cell: (info) => <span className={'text-xs ' + STATUS_CLS[info.getValue()]}>{STATUS_LABEL[info.getValue()]}</span>,
+        // Session-level verdict computed via the centralized AND aggregation
+        // rule (sessionVerdict) — keeps the table in sync with trace cards.
+        cell: ({ row }) => <OverallVerdictPill passed={sessionVerdict(row.original) === 'pass'} size="sm" />,
       }),
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps

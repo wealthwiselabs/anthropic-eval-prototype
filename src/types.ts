@@ -2,7 +2,7 @@ export type JudgeDimension = 'tool-use' | 'safety' | 'faithfulness' | 'task-comp
 
 export type JudgeScore = {
   dimension: JudgeDimension;
-  verdict: 'pass' | 'partial' | 'fail';
+  verdict: 'pass' | 'fail';
   reasoning?: string;
 };
 
@@ -24,7 +24,7 @@ export type Session = {
   turns: number;
   userIdHash: string;
   traces: Trace[];
-  dominantStatus: 'pass' | 'partial' | 'fail';
+  dominantStatus: 'pass' | 'fail';
 };
 
 export type FailureCluster = {

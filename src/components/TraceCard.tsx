@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom';
 import { ChevronDown, ChevronRight } from 'lucide-react';
 import type { Trace, JudgeDimension } from '../types';
 import { JudgePill } from './JudgePill';
+import { OverallVerdictPill } from './OverallVerdictPill';
+import { traceVerdict } from '../lib/verdict';
 import { relTime } from '../lib/time';
 
 type Props = {
@@ -21,10 +23,13 @@ export function TraceCard({ trace, sessionId, defaultExpanded = false }: Props) 
   const [outputOpen, setOutputOpen] = useState(defaultExpanded);
 
   const failedScores = trace.scores.filter((s) => s.verdict === 'fail' && s.reasoning);
+  const passed = traceVerdict(trace) === 'pass';
 
   return (
     <div className="bg-white border border-border rounded-lg p-4 flex flex-col gap-3">
-      {/* Header row: timestamp · session id · latency · tokens */}
+      {/* Header row: timestamp · session id · latency · tokens · overall verdict.
+          The overall PASS/FAIL pill sits at the far right so reviewers can scan
+          a stack of cards and immediately spot fails without reading judges. */}
       <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted">
         <span>{relTime(trace.timestamp)}</span>
         {sessionId && (
@@ -38,6 +43,9 @@ export function TraceCard({ trace, sessionId, defaultExpanded = false }: Props) 
         )}
         <span className="font-mono">{trace.latencyMs}ms</span>
         <span className="font-mono">{trace.tokensIn + trace.tokensOut} tok</span>
+        <span className="ml-auto">
+          <OverallVerdictPill passed={passed} size="sm" />
+        </span>
       </div>
 
       {/* Collapsible input section */}

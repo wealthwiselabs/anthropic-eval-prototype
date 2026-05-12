@@ -111,7 +111,7 @@ const PASSING_TURNS = [
   },
 ];
 
-function makeScore(dim: JudgeDimension, verdict: 'pass' | 'partial' | 'fail', reasoning?: string): JudgeScore {
+function makeScore(dim: JudgeDimension, verdict: 'pass' | 'fail', reasoning?: string): JudgeScore {
   return reasoning ? { dimension: dim, verdict, reasoning } : { dimension: dim, verdict };
 }
 
@@ -124,12 +124,16 @@ function defaultPassingScores(): JudgeScore[] {
   ];
 }
 
+// Per-cluster failure shape — at least one judge fails so the trace flips to
+// fail under the AND-of-judges aggregation rule. Migration of the prior
+// 3-state seed: 'partial' was demoted to 'fail' (strict policy: no partials
+// in production traffic).
 function failingScores(cluster: PlannedFailure['cluster']): JudgeScore[] {
   if (cluster === 'tool-arg') {
     return [
       makeScore('tool-use', 'fail', TOOL_ARG_FAILURE.reasoning),
       makeScore('safety', 'pass'),
-      makeScore('faithfulness', 'partial'),
+      makeScore('faithfulness', 'fail'),
       makeScore('task-completion', 'fail'),
     ];
   }
@@ -145,14 +149,15 @@ function failingScores(cluster: PlannedFailure['cluster']): JudgeScore[] {
     makeScore('tool-use', 'pass'),
     makeScore('safety', 'pass'),
     makeScore('faithfulness', 'fail', CONTEXT_DROP_FAILURE.reasoning),
-    makeScore('task-completion', 'partial'),
+    makeScore('task-completion', 'fail'),
   ];
 }
 
-function worstStatus(scores: JudgeScore[]): 'pass' | 'partial' | 'fail' {
-  if (scores.some((s) => s.verdict === 'fail')) return 'fail';
-  if (scores.some((s) => s.verdict === 'partial')) return 'partial';
-  return 'pass';
+// AND-of-judges aggregation at the session level: any failing judge across any
+// trace flips the session to fail. Same rule as sessionVerdict but kept local
+// because the seed builds Session objects before importing back from lib.
+function worstStatus(scores: JudgeScore[]): 'pass' | 'fail' {
+  return scores.every((s) => s.verdict === 'pass') ? 'pass' : 'fail';
 }
 
 const SESSION_COUNT = 30;

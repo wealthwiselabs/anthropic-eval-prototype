@@ -93,7 +93,7 @@ function DefaultJudgeCard({ judge, usedIn }: { judge: Judge; usedIn: number }) {
 
       <div className="flex items-center gap-2">
         <JudgePill dimension={judge.dimension} />
-        <span className="text-xs text-muted">Scores per-trace</span>
+        <span className="text-xs text-muted">Returns PASS or FAIL per trace</span>
       </div>
 
       <p className="text-sm text-ink/80 leading-relaxed">{judge.description}</p>

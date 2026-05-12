@@ -88,7 +88,9 @@ export function OnboardingWizard({ open, onClose, onComplete }: Props) {
             <p className="text-sm text-ink/80 leading-relaxed">
               When Evals is on, Anthropic samples prod traffic, runs the default judge bundle
               (Tool-use, Safety, Faithfulness) on every sampled trace, and surfaces emerging
-              failure clusters here. No code change required for Managed Agents.
+              failure clusters here. Each judge returns <span className="font-medium">PASS</span>{' '}
+              or <span className="font-medium">FAIL</span>; a trace passes only if every active
+              judge returns PASS. No code change required for Managed Agents.
             </p>
             <div className="flex flex-col gap-2">
               {SCOPE_OPTIONS.map((opt) => {
@@ -171,8 +173,10 @@ export function OnboardingWizard({ open, onClose, onComplete }: Props) {
               </div>
             </div>
             <p className="text-xs text-muted">
-              We'll start showing data within ~15 minutes. You can adjust scope, retention, and
-              judges anytime from Settings.
+              Default bundle (3 judges){agentType === 'other' ? '' : ' + 1 goal-specific judge'} will
+              run on every sampled trace. A trace <span className="font-medium">passes</span> only if
+              every active judge returns PASS. We'll start showing data within ~15 minutes; scope,
+              retention, and judges are editable in Settings.
             </p>
           </div>
         )}

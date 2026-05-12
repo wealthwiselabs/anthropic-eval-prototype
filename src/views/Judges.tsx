@@ -27,7 +27,8 @@ export function Judges() {
       <section>
         <h1 className="font-serif text-2xl text-ink">LLM Judges for travel-agent</h1>
         <p className="text-sm text-muted mt-1 max-w-2xl">
-          Judges active for this project. Manage the org library at{' '}
+          Judges active for this project. Each judge returns PASS or FAIL per trace;
+          a trace passes only if every active judge returns PASS. Manage the org library at{' '}
           <Link to="/eval/judges" className="text-coral hover:underline">
             LLM Judges
           </Link>
@@ -81,7 +82,7 @@ function FromLibraryCard({ judge, agreement }: { judge: Judge; agreement: number
 
       <div className="flex items-center gap-2">
         <JudgePill dimension={judge.dimension} />
-        <span className="text-xs text-muted">Scores per-trace</span>
+        <span className="text-xs text-muted">Returns PASS or FAIL per trace</span>
       </div>
 
       <p className="text-sm text-ink/80 leading-relaxed">{judge.description}</p>
@@ -123,7 +124,7 @@ function ProjectSpecificCard({ judge, agreement }: { judge: Judge; agreement: nu
 
       <div className="flex items-center gap-2">
         <JudgePill dimension={judge.dimension} />
-        <span className="text-xs text-muted">Scores per-trace</span>
+        <span className="text-xs text-muted">Returns PASS or FAIL per trace</span>
       </div>
 
       <p className="text-sm text-ink/80 leading-relaxed">{judge.description}</p>
