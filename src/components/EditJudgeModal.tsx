@@ -16,7 +16,7 @@ type JudgeModel = 'claude-opus-4-7' | 'claude-sonnet-4-6' | 'claude-haiku-4-5';
 type OutputType = 'binary' | 'score' | 'categorical';
 type JudgeScope = 'turn' | 'session';
 
-const DEFAULT_INSTRUCTIONS = `You are evaluating whether a multi-turn travel assistant successfully completed a user's trip-planning task.
+const TRAVEL_INSTRUCTIONS = `You are evaluating whether a multi-turn travel assistant successfully completed a user's trip-planning task.
 
 The user request and full conversation are in {{input}}.
 The agent's final response is in {{output}}.
@@ -29,6 +29,27 @@ A session PASSES only if all of the following are true:
 
 Return ONLY one of: PASS or FAIL.
 If FAIL, include a one-sentence reason after a pipe character: FAIL | <reason>`;
+
+const STARTER_INSTRUCTIONS = `You are evaluating <describe what the agent is supposed to do>.
+
+The user request is in {{input}}.
+The agent's response is in {{output}}.
+The expected behavior or constraints are in {{expected}}.
+
+A response PASSES only if all of the following are true:
+- <criterion 1>
+- <criterion 2>
+- <criterion 3>
+
+Return ONLY one of: PASS or FAIL.
+If FAIL, include a one-sentence reason after a pipe character: FAIL | <reason>`;
+
+function instructionsFor(judgeId: string): string {
+  // Pre-filled prompt for the seeded travel judge; generic starter for any
+  // new/custom judge so the user has a template to edit instead of a blank box.
+  if (judgeId === 'judge_travel_task_v1_0') return TRAVEL_INSTRUCTIONS;
+  return STARTER_INSTRUCTIONS;
+}
 
 // Three curated sample-trace options for the test panel. We hand-pick from the
 // seeded sessions to surface believable session IDs and labels.
@@ -109,7 +130,7 @@ export function EditJudgeModal({ open, onClose, judge }: Props) {
 
   const [name, setName] = useState(judge.name);
   const [model, setModel] = useState<JudgeModel>('claude-opus-4-7');
-  const [instructions, setInstructions] = useState(DEFAULT_INSTRUCTIONS);
+  const [instructions, setInstructions] = useState(instructionsFor(judge.id));
   const [outputType, setOutputType] = useState<OutputType>('binary');
   const [passThreshold, setPassThreshold] = useState(3);
   const [scope, setScope] = useState<JudgeScope>(judge.scope);
@@ -125,7 +146,7 @@ export function EditJudgeModal({ open, onClose, judge }: Props) {
     if (!open) return;
     setName(judge.name);
     setModel('claude-opus-4-7');
-    setInstructions(DEFAULT_INSTRUCTIONS);
+    setInstructions(instructionsFor(judge.id));
     setOutputType('binary');
     setPassThreshold(3);
     setScope(judge.scope);
@@ -145,20 +166,25 @@ export function EditJudgeModal({ open, onClose, judge }: Props) {
     }, 800);
   }
 
+  const isCreate = judge.id === 'new';
+
   function handleSave() {
-    showToast('Judge updated');
+    showToast(isCreate ? 'Custom judge created' : 'Judge updated');
     onClose();
   }
 
   return (
-    <Modal open={open} onClose={onClose} width={820} ariaLabel="Edit judge">
+    <Modal open={open} onClose={onClose} width={820} ariaLabel={isCreate ? 'New custom judge' : 'Edit judge'}>
       {/* Header */}
       <div className="flex items-start justify-between px-5 py-4 border-b border-border">
         <div className="min-w-0">
-          <h2 className="font-serif text-lg text-ink truncate">Edit judge: {judge.name}</h2>
+          <h2 className="font-serif text-lg text-ink truncate">
+            {isCreate ? 'New custom judge' : `Edit judge: ${judge.name}`}
+          </h2>
           <p className="text-xs text-muted mt-1">
-            Changes apply to this project only. To edit the org-wide default, clone it in the
-            Judge library.
+            {isCreate
+              ? 'Define a new LLM-as-judge. Once created, it appears in the Custom section of the Judge library and can be attached to projects.'
+              : 'Changes apply to this project only. To edit the org-wide default, clone it in the Judge library.'}
           </p>
         </div>
         <button
@@ -391,7 +417,7 @@ export function EditJudgeModal({ open, onClose, judge }: Props) {
           disabled={!name.trim()}
           className="px-3 py-1.5 text-sm bg-ink text-white rounded hover:bg-ink/90 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
         >
-          Save changes
+          {isCreate ? 'Create judge' : 'Save changes'}
         </button>
       </div>
     </Modal>

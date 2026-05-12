@@ -1,6 +1,21 @@
+import { useState } from 'react';
 import { JudgePill } from '../components/JudgePill';
+import { EditJudgeModal } from '../components/EditJudgeModal';
 import { judges } from '../data/judges';
 import type { Judge } from '../types';
+
+// Stub judge passed into EditJudgeModal when creating a brand-new custom judge.
+// Sentinel id `new` triggers the modal's create-mode UI (title, save copy,
+// starter prompt template).
+const NEW_JUDGE_STUB: Judge = {
+  id: 'new',
+  name: '',
+  version: 'v1.0',
+  dimension: 'task-completion',
+  description: '',
+  source: 'custom',
+  scope: 'turn',
+};
 
 // Static per-judge "Used in N projects" stat. Org-level page shows reuse
 // across projects rather than the per-project agreement rate that lives on
@@ -17,6 +32,7 @@ const USED_IN_PROJECTS: Record<string, number> = {
 // completion) belong to projects, not to this library, so they're filtered out.
 export function OrgJudges() {
   const defaultJudges = judges.filter((j) => j.source === 'anthropic-default');
+  const [createOpen, setCreateOpen] = useState(false);
 
   return (
     <div className="p-8 max-w-[1280px] w-full mx-auto flex flex-col gap-8">
@@ -28,8 +44,8 @@ export function OrgJudges() {
           </p>
         </div>
         <button
-          title="Mocked in this prototype"
-          className="px-3 py-1.5 text-sm border border-border bg-white text-ink/70 rounded cursor-default flex-shrink-0"
+          onClick={() => setCreateOpen(true)}
+          className="px-3 py-1.5 text-sm border border-ink/80 text-ink rounded hover:bg-ink hover:text-white transition-colors flex-shrink-0"
         >
           + New custom judge
         </button>
@@ -52,13 +68,17 @@ export function OrgJudges() {
             Clone an Anthropic Default to create your own, or start from scratch.
           </div>
           <button
-            title="Mocked in this prototype"
-            className="mt-2 px-3 py-1.5 text-sm border border-border bg-white text-ink/70 rounded cursor-default"
+            onClick={() => setCreateOpen(true)}
+            className="mt-2 px-3 py-1.5 text-sm border border-ink/80 text-ink rounded hover:bg-ink hover:text-white transition-colors"
           >
             + New custom judge
           </button>
         </div>
       </section>
+
+      {createOpen && (
+        <EditJudgeModal open onClose={() => setCreateOpen(false)} judge={NEW_JUDGE_STUB} />
+      )}
     </div>
   );
 }
