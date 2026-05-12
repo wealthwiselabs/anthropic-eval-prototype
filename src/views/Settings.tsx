@@ -282,8 +282,7 @@ export function Settings() {
 }
 
 // Small wrapper around YamlSnippet adding a copy-to-clipboard button. Local to
-// this view since the larger CIIntegration version handles filename headers
-// we don't need here.
+// this view; we don't need the filename-header treatment here.
 function CopyableSnippet({ code }: { code: string }) {
   const [copied, setCopied] = useState(false);
   async function copy() {

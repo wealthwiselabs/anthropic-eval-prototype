@@ -9,7 +9,6 @@ import { ClusterDetail } from './views/ClusterDetail';
 import { TestSetList } from './views/TestSetList';
 import { TestSetDetail } from './views/TestSetDetail';
 import { TestSetRun } from './views/TestSetRun';
-import { CIIntegration } from './views/CIIntegration';
 import { Judges } from './views/Judges';
 import { Settings } from './views/Settings';
 import { OrgJudges } from './views/OrgJudges';
@@ -37,7 +36,6 @@ export default function App() {
           <Route path="/eval/travel-agent/test-sets" element={<TestSetList />} />
           <Route path="/eval/travel-agent/test-sets/:id" element={<TestSetDetail />} />
           <Route path="/eval/travel-agent/test-sets/:id/runs/:runId" element={<TestSetRun />} />
-          <Route path="/eval/travel-agent/ci" element={<CIIntegration />} />
           <Route path="/eval/travel-agent/judges" element={<Judges />} />
           <Route path="/eval/travel-agent/settings" element={<Settings />} />
           <Route path="*" element={<Navigate to="/eval" replace />} />

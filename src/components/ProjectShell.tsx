@@ -3,14 +3,13 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import { ChevronDown } from 'lucide-react';
 import { travelAgent } from '../data/projects';
 
-export type ProjectTab = 'overview' | 'sessions' | 'clusters' | 'test-sets' | 'ci' | 'judges' | 'settings';
+export type ProjectTab = 'overview' | 'sessions' | 'clusters' | 'test-sets' | 'judges' | 'settings';
 
 const TABS: { label: string; to: string; tab: ProjectTab; end?: boolean }[] = [
   { label: 'Overview', to: '/eval/travel-agent', tab: 'overview', end: true },
   { label: 'Sessions', to: '/eval/travel-agent/sessions', tab: 'sessions' },
   { label: 'Clusters', to: '/eval/travel-agent/clusters', tab: 'clusters' },
   { label: 'Test sets', to: '/eval/travel-agent/test-sets', tab: 'test-sets' },
-  { label: 'CI', to: '/eval/travel-agent/ci', tab: 'ci' },
   { label: 'LLM Judges', to: '/eval/travel-agent/judges', tab: 'judges' },
   { label: 'Settings', to: '/eval/travel-agent/settings', tab: 'settings' },
 ];
