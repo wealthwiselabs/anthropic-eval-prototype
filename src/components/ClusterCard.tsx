@@ -24,13 +24,13 @@ export function ClusterCard({ cluster, onView, onSave }: Props) {
       <div className="flex items-center gap-2 pt-1">
         <button
           onClick={onView}
-          className="px-3 py-1.5 text-sm border border-ink/80 text-ink rounded hover:bg-ink hover:text-white transition-colors"
+          className="px-3 py-1.5 text-sm border border-coral text-coral rounded hover:bg-coral/5 transition-colors font-medium"
         >
           View
         </button>
         <button
           onClick={onSave}
-          className="px-3 py-1.5 text-sm text-ink/80 hover:text-ink hover:bg-canvas rounded transition-colors"
+          className="text-sm text-ink/70 hover:text-ink underline-offset-2 hover:underline transition-colors"
         >
           Save
         </button>

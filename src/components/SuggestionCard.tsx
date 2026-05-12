@@ -48,7 +48,7 @@ export function SuggestionCard({ suggestion, cluster }: Props) {
           href={href}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-sm text-coral hover:underline underline-offset-2 whitespace-nowrap font-medium"
+          className="px-3 py-1.5 text-sm border border-coral text-coral rounded hover:bg-coral/5 transition-colors whitespace-nowrap font-medium"
         >
           Open in Agent Builder →
         </a>
