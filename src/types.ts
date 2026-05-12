@@ -105,4 +105,15 @@ export type Project = {
   sessions14d: number;
   evalCostMTD: number;
   clusterCount: number;
+  // Latency per-trace (in milliseconds)
+  latencyP95Ms14d: number;
+  latencyP90Ms14d: number;
+  latencyP80Ms14d: number;
+  latencyP95History: { day: string; value: number }[]; // 14 data points, in ms
+
+  // Cost per-session (in dollars, e.g., 0.042)
+  sessionCostP95: number;
+  sessionCostP90: number;
+  sessionCostP80: number;
+  sessionCostP95History: { day: string; value: number }[]; // 14 data points
 };

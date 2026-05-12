@@ -170,6 +170,14 @@ export function ConnectSelfHostedModal({ open, onClose }: Props) {
       sessions14d: 0,
       evalCostMTD: 0,
       clusterCount: 0,
+      latencyP95Ms14d: 0,
+      latencyP90Ms14d: 0,
+      latencyP80Ms14d: 0,
+      latencyP95History: [],
+      sessionCostP95: 0,
+      sessionCostP90: 0,
+      sessionCostP80: 0,
+      sessionCostP95History: [],
     };
     addProject(newProject);
     showToast(`Project "${projectId}" created. Waiting for first trace...`);

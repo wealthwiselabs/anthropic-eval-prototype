@@ -18,20 +18,44 @@ export function ProjectHome() {
   return (
     <ProjectShell activeTab="overview">
       {/* Band 2: health KPIs */}
-      <section className="grid grid-cols-4 gap-4">
+      <section className="grid grid-cols-6 gap-3">
         <KPITile
           label="Session pass rate"
           value={`${Math.round(travelAgent.sessionPassRate14d * 100)}%`}
           sublabel="last 14 days"
-          sparkline={travelAgent.passRateHistory}
+          sparkline={travelAgent.passRateHistory.map((p) => ({ day: p.day, value: p.rate }))}
         />
         <KPITile
-          label="Traces sampled"
-          value={travelAgent.tracesSampled14d.toLocaleString()}
+          label="Sessions · 14d"
+          value={travelAgent.sessions14d.toLocaleString()}
           sublabel="last 14 days"
         />
         <KPITile label="Active clusters" value={String(travelAgent.clusterCount)} sublabel="needs review" />
-        <KPITile label="Eval cost (MTD)" value={`$${travelAgent.evalCostMTD.toFixed(2)}`} sublabel="5% of API spend" />
+        <KPITile
+          label="Latency (P95)"
+          value={`${(travelAgent.latencyP95Ms14d / 1000).toFixed(1)}s`}
+          subStats={[
+            { label: 'P90', value: `${(travelAgent.latencyP90Ms14d / 1000).toFixed(1)}s` },
+            { label: 'P80', value: `${(travelAgent.latencyP80Ms14d / 1000).toFixed(1)}s` },
+          ]}
+          sparkline={travelAgent.latencyP95History}
+          formatValue={(v) => `${(v / 1000).toFixed(1)}s`}
+        />
+        <KPITile
+          label="Session cost (P95)"
+          value={`$${travelAgent.sessionCostP95.toFixed(3)}`}
+          subStats={[
+            { label: 'P90', value: `$${travelAgent.sessionCostP90.toFixed(3)}` },
+            { label: 'P80', value: `$${travelAgent.sessionCostP80.toFixed(3)}` },
+          ]}
+          sparkline={travelAgent.sessionCostP95History}
+          formatValue={(v) => `$${v.toFixed(3)}`}
+        />
+        <KPITile
+          label="Eval cost MTD"
+          value={`$${travelAgent.evalCostMTD.toFixed(2)}`}
+          sublabel="5% of API spend"
+        />
       </section>
 
       {/* Band 3: failure clusters */}
