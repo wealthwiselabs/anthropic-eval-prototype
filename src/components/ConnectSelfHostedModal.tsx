@@ -2,7 +2,9 @@ import { useEffect, useMemo, useState } from 'react';
 import { Check, Copy, X } from 'lucide-react';
 import { Modal } from './Modal';
 import { YamlSnippet } from './YamlSnippet';
+import { JudgePill } from './JudgePill';
 import { useStore } from '../store/useStore';
+import type { Project } from '../types';
 
 type Props = {
   open: boolean;
@@ -85,11 +87,38 @@ function sanitize(raw: string): string {
   return raw.replace(/["'`\\]/g, '').trim() || 'my-agent';
 }
 
+// Sanitize for the project ID/name we'll persist: lowercase, non-alphanumeric
+// → hyphen, trim leading/trailing hyphens, fallback to my-agent. Stricter than
+// the SDK-snippet sanitizer because this becomes the URL slug.
+function sanitizeProjectId(raw: string): string {
+  const cleaned = raw
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+  return cleaned || 'my-agent';
+}
+
+type GoalJudge = 'none' | 'support' | 'code' | 'rag' | 'travel' | 'other';
+
+// Preview labels mirror what the goal-specific judge would be named once
+// created. Drives the inline preview line under the dropdown.
+const GOAL_JUDGE_LABEL: Record<Exclude<GoalJudge, 'none'>, string> = {
+  support: 'Support-task resolution v1.0',
+  code: 'Code-task completion v1.0',
+  rag: 'Retrieval-task completion v1.0',
+  travel: 'Travel-task completion v1.0',
+  other: 'Generic task completion v1.0',
+};
+
 export function ConnectSelfHostedModal({ open, onClose }: Props) {
   const showToast = useStore((s) => s.showToast);
+  const projects = useStore((s) => s.projects);
+  const addProject = useStore((s) => s.addProject);
   const [projectName, setProjectName] = useState('my-agent');
   const [tab, setTab] = useState<Tab>('python');
   const [copied, setCopied] = useState(false);
+  const [goalJudge, setGoalJudge] = useState<GoalJudge>('none');
+  const [duplicateError, setDuplicateError] = useState<string | null>(null);
 
   // Reset to defaults each time the modal reopens so a previous draft doesn't
   // leak across opens.
@@ -98,6 +127,8 @@ export function ConnectSelfHostedModal({ open, onClose }: Props) {
     setProjectName('my-agent');
     setTab('python');
     setCopied(false);
+    setGoalJudge('none');
+    setDuplicateError(null);
   }, [open]);
 
   const safeName = useMemo(() => sanitize(projectName), [projectName]);
@@ -121,8 +152,28 @@ export function ConnectSelfHostedModal({ open, onClose }: Props) {
     }
   }
 
-  function handleCheckForTraces() {
-    showToast(`Still waiting for first call from "${safeName}"`);
+  function handleCreateProject() {
+    const projectId = sanitizeProjectId(projectName);
+    // Block duplicate IDs — surfaces an inline error rather than silently
+    // overwriting an existing project.
+    if (projects.some((p) => p.id === projectId)) {
+      setDuplicateError(`Project "${projectId}" already exists.`);
+      return;
+    }
+    const newProject: Project = {
+      id: projectId,
+      name: projectId,
+      type: 'self-hosted',
+      sessionPassRate14d: 0,
+      passRateHistory: [],
+      tracesSampled14d: 0,
+      sessions14d: 0,
+      evalCostMTD: 0,
+      clusterCount: 0,
+    };
+    addProject(newProject);
+    showToast(`Project "${projectId}" created. Waiting for first trace...`);
+    onClose();
   }
 
   return (
@@ -153,7 +204,12 @@ export function ConnectSelfHostedModal({ open, onClose }: Props) {
           <input
             type="text"
             value={projectName}
-            onChange={(e) => setProjectName(e.target.value)}
+            onChange={(e) => {
+              setProjectName(e.target.value);
+              // Editing the name should clear any prior dup error — the new
+              // value may not collide.
+              if (duplicateError) setDuplicateError(null);
+            }}
             placeholder="my-agent"
             className="border border-border rounded px-3 py-2 text-sm font-mono text-ink focus:outline-none focus:border-coral"
           />
@@ -237,23 +293,104 @@ export function ConnectSelfHostedModal({ open, onClose }: Props) {
             appear in your list and we'll start sampling.
           </p>
         </div>
+
+        {/* Step 4 — LLM Judges */}
+        <div className="border border-border rounded-lg p-4 flex flex-col gap-3">
+          <div className="text-xs uppercase tracking-wide text-muted">Step 4</div>
+          <div className="text-sm text-ink font-medium">LLM Judges</div>
+
+          {/* a) Default bundle */}
+          <div className="flex flex-col gap-2">
+            <div className="text-xs font-medium text-ink/80">
+              Default bundle <span className="text-muted">· Always on</span>
+            </div>
+            <div className="grid grid-cols-3 gap-2">
+              {/* Three Anthropic-curated default judges. Read-only cards. */}
+              <div className="border border-border rounded p-2 flex flex-col gap-1 bg-chrome/40">
+                <div className="text-xs font-medium text-ink leading-tight">Tool-use correctness v2.1</div>
+                <div className="flex items-center gap-1">
+                  <JudgePill dimension="tool-use" size="sm" />
+                  <span className="text-[10px] uppercase tracking-wide text-muted bg-muted/15 px-1 py-0.5 rounded">
+                    Per-turn
+                  </span>
+                </div>
+              </div>
+              <div className="border border-border rounded p-2 flex flex-col gap-1 bg-chrome/40">
+                <div className="text-xs font-medium text-ink leading-tight">Safety v3.0</div>
+                <div className="flex items-center gap-1">
+                  <JudgePill dimension="safety" size="sm" />
+                  <span className="text-[10px] uppercase tracking-wide text-muted bg-muted/15 px-1 py-0.5 rounded">
+                    Per-turn
+                  </span>
+                </div>
+              </div>
+              <div className="border border-border rounded p-2 flex flex-col gap-1 bg-chrome/40">
+                <div className="text-xs font-medium text-ink leading-tight">Groundedness v1.4</div>
+                <div className="flex items-center gap-1">
+                  <JudgePill dimension="groundedness" size="sm" />
+                  <span className="text-[10px] uppercase tracking-wide text-muted bg-muted/15 px-1 py-0.5 rounded">
+                    Per-turn
+                  </span>
+                </div>
+              </div>
+            </div>
+            <p className="text-xs text-muted">
+              These three Anthropic-curated judges run on every sampled trace by default.
+            </p>
+          </div>
+
+          {/* b) Goal-specific judge (optional) */}
+          <div className="flex flex-col gap-2 pt-2 border-t border-border">
+            <div className="text-xs font-medium text-ink/80">Goal-specific judge (optional)</div>
+            <label className="flex flex-col gap-1">
+              <span className="text-xs text-muted">What does this agent do?</span>
+              <select
+                value={goalJudge}
+                onChange={(e) => setGoalJudge(e.target.value as GoalJudge)}
+                className="border border-border rounded px-2 py-1.5 text-sm text-ink bg-white focus:outline-none focus:border-coral"
+              >
+                <option value="none">None (default)</option>
+                <option value="support">Support</option>
+                <option value="code">Code</option>
+                <option value="rag">RAG</option>
+                <option value="travel">Travel</option>
+                <option value="other">Other</option>
+              </select>
+            </label>
+            {goalJudge !== 'none' && (
+              <div className="text-xs text-ink bg-chrome/50 border border-border rounded px-2 py-1.5">
+                We'll add: <span className="font-medium">{GOAL_JUDGE_LABEL[goalJudge]}</span> (per-session)
+              </div>
+            )}
+            <p className="text-xs text-muted">
+              Goal-specific judges score the whole session, not individual turns. You can change this later in project
+              Settings.
+            </p>
+          </div>
+        </div>
       </div>
 
       {/* Footer */}
-      <div className="flex items-center justify-end gap-2 px-5 py-3 border-t border-border bg-chrome">
-        <button
-          onClick={onClose}
-          className="px-3 py-1.5 text-sm text-ink/80 hover:text-ink transition-colors"
-        >
-          I'll do this later
-        </button>
-        <button
-          onClick={handleCheckForTraces}
-          title="Mocked in this prototype"
-          className="px-3 py-1.5 text-sm bg-ink text-white rounded hover:bg-ink/90 transition-colors"
-        >
-          I've added it — check for traces
-        </button>
+      <div className="flex flex-col gap-2 px-5 py-3 border-t border-border bg-chrome">
+        {duplicateError && (
+          <div className="text-xs text-coral bg-coral/10 border border-coral/30 rounded px-2 py-1.5">
+            {duplicateError}
+          </div>
+        )}
+        <div className="flex items-center justify-end gap-2">
+          <button
+            onClick={onClose}
+            className="px-3 py-1.5 text-sm text-ink/80 hover:text-ink transition-colors"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={handleCreateProject}
+            className="px-3 py-1.5 text-sm bg-ink text-white rounded hover:bg-ink/90 transition-colors"
+          >
+            Create project
+          </button>
+        </div>
       </div>
     </Modal>
   );

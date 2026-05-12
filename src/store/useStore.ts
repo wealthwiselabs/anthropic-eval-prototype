@@ -1,7 +1,8 @@
 import { create } from 'zustand';
-import type { TestSet, Run } from '../types';
+import type { TestSet, Run, Project } from '../types';
 import { testSets as seededTestSets } from '../data/testSets';
 import { runs as seededRuns } from '../data/runs';
+import { travelAgent } from '../data/projects';
 
 // Single global store. Holds the only mutable state in the prototype:
 // - testSets: seeded list + any test sets the user creates via the modal
@@ -23,6 +24,9 @@ type ToastState = {
 type Store = {
   testSets: TestSet[];
   runs: Run[];
+  // Projects list is mutable so the Connect modal can append empty-state
+  // projects without touching the seed file. Seeded from data/projects.ts.
+  projects: Project[];
   toast: ToastState;
   // Eval settings split into org-level and project-level. Project-level fields
   // (evalEnabled, retentionDays) represent per-project overrides; org-level
@@ -36,6 +40,7 @@ type Store = {
   orgDefaultRetentionDays: RetentionDays;
   addTestSet: (testSet: TestSet) => void;
   addRun: (run: Run) => void;
+  addProject: (project: Project) => void;
   showToast: (message: string, action?: { label: string; to: string }) => void;
   dismissToast: () => void;
   setEvalEnabled: (enabled: boolean) => void;
@@ -48,6 +53,7 @@ type Store = {
 export const useStore = create<Store>((set) => ({
   testSets: seededTestSets,
   runs: seededRuns,
+  projects: [travelAgent],
   toast: null,
   evalEnabled: true,
   agentType: 'travel',
@@ -56,6 +62,7 @@ export const useStore = create<Store>((set) => ({
   orgDefaultRetentionDays: 30,
   addTestSet: (testSet) => set((s) => ({ testSets: [testSet, ...s.testSets] })),
   addRun: (run) => set((s) => ({ runs: [run, ...s.runs] })),
+  addProject: (project) => set((s) => ({ projects: [...s.projects, project] })),
   showToast: (message, action) =>
     set({
       toast: {
