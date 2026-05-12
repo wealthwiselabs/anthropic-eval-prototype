@@ -91,7 +91,8 @@ export function OrgSettings() {
           <div>
             <h2 className="font-serif text-lg text-ink">Default sampling policy</h2>
             <p className="text-sm text-muted mt-1 max-w-2xl">
-              Adaptive. We auto-tune sample rate per project to keep judge cost under{' '}
+              Judges run asynchronously within seconds of each sampled trace — no schedule needed.
+              We auto-tune sample rate per project to keep judge cost under{' '}
               <span className="font-medium text-ink">5% of API spend</span>. Low-volume projects sample at 100%.
             </p>
           </div>

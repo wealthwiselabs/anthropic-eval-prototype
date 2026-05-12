@@ -142,7 +142,8 @@ export function Settings() {
       <section className="bg-white border border-border rounded-lg p-5">
         <h2 className="font-serif text-lg text-ink">Sampling</h2>
         <p className="text-sm text-muted mt-1 max-w-2xl">
-          Inherits org default policy: adaptive, capped at 5% of API spend.{' '}
+          Judges run asynchronously within seconds of each sampled trace — no schedule needed.
+          Adjust sampling rate and filters to control coverage and cost.{' '}
           <Link to="/eval/settings" className="text-coral hover:underline font-medium">
             Adjust at org level →
           </Link>
