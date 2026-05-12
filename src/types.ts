@@ -24,6 +24,10 @@ export type Session = {
   turns: number;
   userIdHash: string;
   traces: Trace[];
+  // Session-scoped judge verdicts (e.g. task-completion). Per-turn judges live
+  // on Trace.scores; this array is for outcomes that only make sense across
+  // the whole conversation.
+  sessionScores: JudgeScore[];
   dominantStatus: 'pass' | 'fail';
 };
 
@@ -79,6 +83,10 @@ export type Judge = {
   dimension: JudgeDimension;
   description: string;
   source: 'anthropic-default' | 'goal-specific' | 'custom';
+  // Whether the judge scores each API call/trace or the full session as a unit.
+  // Per-turn judges (tool-use, safety, faithfulness) score every trace; the
+  // per-session judge (task-completion) scores the whole conversation outcome.
+  scope: 'turn' | 'session';
 };
 
 export type Project = {

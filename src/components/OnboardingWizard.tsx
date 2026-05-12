@@ -173,10 +173,12 @@ export function OnboardingWizard({ open, onClose, onComplete }: Props) {
               </div>
             </div>
             <p className="text-xs text-muted">
-              Default bundle (3 judges){agentType === 'other' ? '' : ' + 1 goal-specific judge'} will
-              run on every sampled trace. A trace <span className="font-medium">passes</span> only if
-              every active judge returns PASS. We'll start showing data within ~15 minutes; scope,
-              retention, and judges are editable in Settings.
+              Default bundle (3 per-turn judges)
+              {agentType === 'other' ? '' : ' + 1 per-session goal-specific judge'} will run on every
+              sampled session. Per-turn judges score each trace; the per-session judge scores the
+              whole conversation. A session <span className="font-medium">passes</span> only if every
+              session-level judge AND every turn's per-turn judges return PASS. We'll start showing
+              data within ~15 minutes; scope, retention, and judges are editable in Settings.
             </p>
           </div>
         )}

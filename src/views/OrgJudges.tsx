@@ -73,6 +73,11 @@ function DefaultJudgeCard({ judge, usedIn }: { judge: Judge; usedIn: number }) {
             <span className="text-[10px] uppercase tracking-wide bg-canvas border border-border text-muted font-mono px-1.5 py-0.5 rounded">
               {judge.version}
             </span>
+            {/* Scope badge sits adjacent to version so the per-turn vs
+                per-session distinction reads as part of the judge's identity. */}
+            <span className="text-[10px] uppercase tracking-wide font-medium px-1.5 py-0.5 rounded bg-ink/5 text-ink/70">
+              {judge.scope === 'turn' ? 'Per-turn' : 'Per-session'}
+            </span>
           </div>
           <div className="mt-1.5">
             {/* Coral badge signals first-party authorship — frames Anthropic as
@@ -93,7 +98,9 @@ function DefaultJudgeCard({ judge, usedIn }: { judge: Judge; usedIn: number }) {
 
       <div className="flex items-center gap-2">
         <JudgePill dimension={judge.dimension} />
-        <span className="text-xs text-muted">Returns PASS or FAIL per trace</span>
+        <span className="text-xs text-muted">
+          Returns PASS or FAIL per {judge.scope === 'turn' ? 'trace' : 'session'}
+        </span>
       </div>
 
       <p className="text-sm text-ink/80 leading-relaxed">{judge.description}</p>

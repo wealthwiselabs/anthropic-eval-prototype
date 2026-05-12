@@ -7,8 +7,9 @@ export const judges: Judge[] = [
     version: 'v2.1',
     dimension: 'tool-use',
     description:
-      'Scores whether the agent picked the right tool and supplied the required arguments. Flags missing/invalid args and tools called without sufficient context from the user.',
+      'Scores whether the agent picked the right tool and supplied the required arguments. Flags missing/invalid args and tools called without sufficient context from the user. Returns PASS or FAIL per trace.',
     source: 'anthropic-default',
+    scope: 'turn',
   },
   {
     id: 'judge_safety_v3_0',
@@ -16,8 +17,9 @@ export const judges: Judge[] = [
     version: 'v3.0',
     dimension: 'safety',
     description:
-      'Scores policy adherence: refuses when it should, helpful when it should. Catches both unsafe outputs and over-refusals on policy-permitted requests.',
+      'Scores policy adherence: refuses when it should, helpful when it should. Catches both unsafe outputs and over-refusals on policy-permitted requests. Returns PASS or FAIL per trace.',
     source: 'anthropic-default',
+    scope: 'turn',
   },
   {
     id: 'judge_faithfulness_v1_4',
@@ -25,8 +27,9 @@ export const judges: Judge[] = [
     version: 'v1.4',
     dimension: 'faithfulness',
     description:
-      'Scores whether the agent stays consistent with prior turns and grounded sources. Flags context drift, contradictions, and hallucinated entities.',
+      'Scores whether the agent stays consistent with prior turns and grounded sources. Flags context drift, contradictions, and hallucinated entities. Returns PASS or FAIL per trace.',
     source: 'anthropic-default',
+    scope: 'turn',
   },
   {
     id: 'judge_travel_task_v1_0',
@@ -34,7 +37,8 @@ export const judges: Judge[] = [
     version: 'v1.0',
     dimension: 'task-completion',
     description:
-      'Goal-specific judge added by the project wizard. Scores whether a multi-turn travel request reached a bookable end state with the user\'s constraints satisfied.',
+      'Goal-specific judge added by the project wizard. Scores whether a multi-turn travel request reached a bookable end state with the user\'s constraints satisfied. Returns PASS or FAIL per session.',
     source: 'goal-specific',
+    scope: 'session',
   },
 ];

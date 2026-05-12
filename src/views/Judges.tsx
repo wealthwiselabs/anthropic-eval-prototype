@@ -67,6 +67,9 @@ function FromLibraryCard({ judge, agreement }: { judge: Judge; agreement: number
             <span className="text-[10px] uppercase tracking-wide bg-canvas border border-border text-muted font-mono px-1.5 py-0.5 rounded">
               {judge.version}
             </span>
+            <span className="text-[10px] uppercase tracking-wide font-medium px-1.5 py-0.5 rounded bg-ink/5 text-ink/70">
+              {judge.scope === 'turn' ? 'Per-turn' : 'Per-session'}
+            </span>
           </div>
           <div className="mt-1.5">
             <span className="text-[10px] uppercase tracking-wide font-medium px-1.5 py-0.5 rounded bg-ink/5 text-ink/70">
@@ -82,7 +85,9 @@ function FromLibraryCard({ judge, agreement }: { judge: Judge; agreement: number
 
       <div className="flex items-center gap-2">
         <JudgePill dimension={judge.dimension} />
-        <span className="text-xs text-muted">Returns PASS or FAIL per trace</span>
+        <span className="text-xs text-muted">
+          Returns PASS or FAIL per {judge.scope === 'turn' ? 'trace' : 'session'}
+        </span>
       </div>
 
       <p className="text-sm text-ink/80 leading-relaxed">{judge.description}</p>
@@ -109,6 +114,9 @@ function ProjectSpecificCard({ judge, agreement }: { judge: Judge; agreement: nu
             <span className="text-[10px] uppercase tracking-wide bg-canvas border border-border text-muted font-mono px-1.5 py-0.5 rounded">
               {judge.version}
             </span>
+            <span className="text-[10px] uppercase tracking-wide font-medium px-1.5 py-0.5 rounded bg-ink/5 text-ink/70">
+              {judge.scope === 'turn' ? 'Per-turn' : 'Per-session'}
+            </span>
           </div>
           <div className="mt-1.5">
             <span className="text-[10px] uppercase tracking-wide font-medium px-1.5 py-0.5 rounded bg-coral/15 text-coral">
@@ -124,7 +132,9 @@ function ProjectSpecificCard({ judge, agreement }: { judge: Judge; agreement: nu
 
       <div className="flex items-center gap-2">
         <JudgePill dimension={judge.dimension} />
-        <span className="text-xs text-muted">Returns PASS or FAIL per trace</span>
+        <span className="text-xs text-muted">
+          Returns PASS or FAIL per {judge.scope === 'turn' ? 'trace' : 'session'}
+        </span>
       </div>
 
       <p className="text-sm text-ink/80 leading-relaxed">{judge.description}</p>

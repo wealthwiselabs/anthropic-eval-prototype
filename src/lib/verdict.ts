@@ -6,8 +6,12 @@ export function traceVerdict(trace: Trace): 'pass' | 'fail' {
   return trace.scores.every((s) => s.verdict === 'pass') ? 'pass' : 'fail';
 }
 
-// Session passes only if every trace in it passed. Mirrors the trace-level rule
-// one layer up so session-table status and per-trace pills agree by construction.
+// Session passes only if (a) every trace passes its per-turn judges AND
+// (b) every session-scoped judge (e.g. task-completion) passes. Splitting the
+// AND across both scopes keeps per-turn correctness and session-level outcome
+// independently visible while still rolling up to a single verdict.
 export function sessionVerdict(session: Session): 'pass' | 'fail' {
-  return session.traces.every((t) => traceVerdict(t) === 'pass') ? 'pass' : 'fail';
+  const turnsAllPass = session.traces.every((t) => traceVerdict(t) === 'pass');
+  const sessionScoresAllPass = session.sessionScores.every((s) => s.verdict === 'pass');
+  return turnsAllPass && sessionScoresAllPass ? 'pass' : 'fail';
 }

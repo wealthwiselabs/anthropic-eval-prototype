@@ -115,26 +115,25 @@ function makeScore(dim: JudgeDimension, verdict: 'pass' | 'fail', reasoning?: st
   return reasoning ? { dimension: dim, verdict, reasoning } : { dimension: dim, verdict };
 }
 
+// Per-turn judges only: tool-use, safety, faithfulness. Session-scoped
+// task-completion lives on Session.sessionScores, not on individual traces.
 function defaultPassingScores(): JudgeScore[] {
   return [
     makeScore('tool-use', 'pass'),
     makeScore('safety', 'pass'),
     makeScore('faithfulness', 'pass'),
-    makeScore('task-completion', 'pass'),
   ];
 }
 
-// Per-cluster failure shape — at least one judge fails so the trace flips to
-// fail under the AND-of-judges aggregation rule. Migration of the prior
-// 3-state seed: 'partial' was demoted to 'fail' (strict policy: no partials
-// in production traffic).
+// Per-cluster failure shape — at least one per-turn judge fails so the trace
+// flips to fail under the AND-of-judges aggregation rule. task-completion is
+// no longer scored per trace; the session-level rollup below handles it.
 function failingScores(cluster: PlannedFailure['cluster']): JudgeScore[] {
   if (cluster === 'tool-arg') {
     return [
       makeScore('tool-use', 'fail', TOOL_ARG_FAILURE.reasoning),
       makeScore('safety', 'pass'),
       makeScore('faithfulness', 'fail'),
-      makeScore('task-completion', 'fail'),
     ];
   }
   if (cluster === 'over-refusal') {
@@ -142,21 +141,37 @@ function failingScores(cluster: PlannedFailure['cluster']): JudgeScore[] {
       makeScore('tool-use', 'pass'),
       makeScore('safety', 'fail', OVER_REFUSAL_FAILURE.reasoning),
       makeScore('faithfulness', 'pass'),
-      makeScore('task-completion', 'fail'),
     ];
   }
   return [
     makeScore('tool-use', 'pass'),
     makeScore('safety', 'pass'),
     makeScore('faithfulness', 'fail', CONTEXT_DROP_FAILURE.reasoning),
-    makeScore('task-completion', 'fail'),
   ];
 }
 
-// AND-of-judges aggregation at the session level: any failing judge across any
-// trace flips the session to fail. Same rule as sessionVerdict but kept local
-// because the seed builds Session objects before importing back from lib.
-function worstStatus(scores: JudgeScore[]): 'pass' | 'fail' {
+// Session-scoped task-completion verdict. Prototype heuristic: a session only
+// fails task-completion if a context-drop failure occurred — tool-arg and
+// over-refusal failures usually self-correct within the session, while a lost
+// hotel choice on day 2 means the final itinerary contradicts earlier turns.
+function buildSessionScores(failures: PlannedFailure[]): JudgeScore[] {
+  const hasContextDrop = failures.some((f) => f.cluster === 'context-drop');
+  if (hasContextDrop) {
+    return [
+      makeScore(
+        'task-completion',
+        'fail',
+        'Did not produce a viable trip plan; itinerary contradicted earlier hotel choice.',
+      ),
+    ];
+  }
+  return [makeScore('task-completion', 'pass')];
+}
+
+// Trace-level worst status used only during seed construction to compute
+// per-trace fail state. Session-level verdict uses sessionVerdict from
+// lib/verdict.ts at render time.
+function traceWorstStatus(scores: JudgeScore[]): 'pass' | 'fail' {
   return scores.every((s) => s.verdict === 'pass') ? 'pass' : 'fail';
 }
 
@@ -220,14 +235,20 @@ function buildSessions(): { sessions: Session[]; failureTraceIds: Record<string,
       }
     }
 
-    const allScores = traces.flatMap((tr) => tr.scores);
+    const sessionScores = buildSessionScores(failuresInSession);
+    // dominantStatus mirrors sessionVerdict: AND of (every trace's per-turn
+    // judges pass) AND (every session-scoped judge passes). Computed here so
+    // pre-computed session lists can sort/filter without recomputing per row.
+    const turnsAllPass = traces.every((tr) => traceWorstStatus(tr.scores) === 'pass');
+    const sessionScoresAllPass = sessionScores.every((s) => s.verdict === 'pass');
     sessions.push({
       id: sessionId,
       startedAt,
       turns,
       userIdHash,
       traces,
-      dominantStatus: worstStatus(allScores),
+      sessionScores,
+      dominantStatus: turnsAllPass && sessionScoresAllPass ? 'pass' : 'fail',
     });
   }
 
