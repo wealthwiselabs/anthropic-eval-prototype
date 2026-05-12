@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import type { TestSet, Run, Project } from '../types';
+import type { TestSet, Run, Project, Judge } from '../types';
 import { testSets as seededTestSets } from '../data/testSets';
 import { runs as seededRuns } from '../data/runs';
 import { travelAgent } from '../data/projects';
@@ -27,6 +27,10 @@ type Store = {
   // Projects list is mutable so the Connect modal can append empty-state
   // projects without touching the seed file. Seeded from data/projects.ts.
   projects: Project[];
+  // User-created custom judges from the org Judge library. Seeded judges live
+  // in data/judges.ts; this slot only holds judges minted via EditJudgeModal so
+  // re-edits round-trip back to the same entry rather than duplicating.
+  customJudges: Judge[];
   toast: ToastState;
   // Eval settings split into org-level and project-level. Project-level fields
   // (evalEnabled, retentionDays) represent per-project overrides; org-level
@@ -41,6 +45,8 @@ type Store = {
   addTestSet: (testSet: TestSet) => void;
   addRun: (run: Run) => void;
   addProject: (project: Project) => void;
+  addCustomJudge: (judge: Judge) => void;
+  updateCustomJudge: (id: string, patch: Partial<Judge>) => void;
   showToast: (message: string, action?: { label: string; to: string }) => void;
   dismissToast: () => void;
   setEvalEnabled: (enabled: boolean) => void;
@@ -54,6 +60,7 @@ export const useStore = create<Store>((set) => ({
   testSets: seededTestSets,
   runs: seededRuns,
   projects: [travelAgent],
+  customJudges: [],
   toast: null,
   evalEnabled: true,
   agentType: 'travel',
@@ -63,6 +70,11 @@ export const useStore = create<Store>((set) => ({
   addTestSet: (testSet) => set((s) => ({ testSets: [testSet, ...s.testSets] })),
   addRun: (run) => set((s) => ({ runs: [run, ...s.runs] })),
   addProject: (project) => set((s) => ({ projects: [...s.projects, project] })),
+  addCustomJudge: (judge) => set((s) => ({ customJudges: [...s.customJudges, judge] })),
+  updateCustomJudge: (id, patch) =>
+    set((s) => ({
+      customJudges: s.customJudges.map((j) => (j.id === id ? { ...j, ...patch } : j)),
+    })),
   showToast: (message, action) =>
     set({
       toast: {

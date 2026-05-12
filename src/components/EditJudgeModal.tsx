@@ -125,6 +125,8 @@ function computeTestResult(sessionId: string): TestResult {
 // against the seeded session data.
 export function EditJudgeModal({ open, onClose, judge }: Props) {
   const showToast = useStore((s) => s.showToast);
+  const addCustomJudge = useStore((s) => s.addCustomJudge);
+  const updateCustomJudge = useStore((s) => s.updateCustomJudge);
 
   const sampleOptions = useMemo(() => pickSampleSessions(), []);
 
@@ -169,7 +171,30 @@ export function EditJudgeModal({ open, onClose, judge }: Props) {
   const isCreate = judge.id === 'new';
 
   function handleSave() {
-    showToast(isCreate ? 'Custom judge created' : 'Judge updated');
+    const trimmed = name.trim();
+    if (isCreate) {
+      // Only `name` and `scope` round-trip in the prototype; instructions /
+      // model / outputType stay client-side because they're not on the Judge
+      // type. Re-editing falls back to the starter template via instructionsFor.
+      const newJudge: Judge = {
+        id: `judge_custom_${Date.now()}`,
+        name: trimmed || 'Untitled judge',
+        version: 'v1.0',
+        dimension: 'task-completion',
+        description: 'Custom judge defined via the org Judge library.',
+        source: 'custom',
+        scope,
+      };
+      addCustomJudge(newJudge);
+      showToast('Custom judge created');
+    } else if (judge.source === 'custom') {
+      updateCustomJudge(judge.id, { name: trimmed, scope });
+      showToast('Judge updated');
+    } else {
+      // Anthropic Default and goal-specific judges aren't persisted in this
+      // prototype — saving just acknowledges the action.
+      showToast('Judge updated');
+    }
     onClose();
   }
 
