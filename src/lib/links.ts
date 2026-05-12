@@ -1,11 +1,20 @@
 // Deep-link helper for the Agent Builder (M1) prototype.
 //
-// The M1 prototype lives at a separate hosted URL and accepts query params
-// to pre-load templates and surface eval-context callouts. For local dev,
-// override M1_BASE_URL to point at your local M1 dev server (typically
-// http://localhost:5174 when both prototypes run concurrently).
+// On localhost, route to the local M1 dev server (Vite auto-picks 5174 when
+// 5173 is taken by this prototype). On any other host, use the deployed
+// GitHub Pages URL. Override with `VITE_M1_BASE_URL` env var if needed.
 
-const M1_BASE_URL = 'https://wealthwiselabs.github.io/anthropic-agent-builder-prototype';
+const HOSTED_M1 = 'https://wealthwiselabs.github.io/anthropic-agent-builder-prototype';
+const LOCAL_M1 = 'http://localhost:5174';
+
+function resolveBase(): string {
+  const envOverride = import.meta.env.VITE_M1_BASE_URL as string | undefined;
+  if (envOverride) return envOverride.replace(/\/$/, '');
+  if (typeof window !== 'undefined' && window.location.hostname === 'localhost') {
+    return LOCAL_M1;
+  }
+  return HOSTED_M1;
+}
 
 export function agentBuilderUrl(params: {
   suggestion: string;
@@ -22,5 +31,5 @@ export function agentBuilderUrl(params: {
     cluster: params.cluster,
     ...(params.project ? { project: params.project } : {}),
   });
-  return `${M1_BASE_URL}/builder?${search.toString()}`;
+  return `${resolveBase()}/builder?${search.toString()}`;
 }
