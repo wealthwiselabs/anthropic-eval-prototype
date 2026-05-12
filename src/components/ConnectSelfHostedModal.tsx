@@ -168,6 +168,7 @@ export function ConnectSelfHostedModal({ open, onClose }: Props) {
       passRateHistory: [],
       tracesSampled14d: 0,
       sessions14d: 0,
+      sessions14dHistory: [],
       evalCostMTD: 0,
       clusterCount: 0,
       latencyP95Ms14d: 0,

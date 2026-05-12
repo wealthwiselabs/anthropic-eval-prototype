@@ -103,6 +103,7 @@ export type Project = {
   // Different from sessions14d, which counts distinct conversations.
   tracesSampled14d: number;
   sessions14d: number;
+  sessions14dHistory: { day: string; value: number }[];
   evalCostMTD: number;
   clusterCount: number;
   // Latency per-trace (in milliseconds)

@@ -29,6 +29,8 @@ export function ProjectHome() {
           label="Sessions · 14d"
           value={travelAgent.sessions14d.toLocaleString()}
           sublabel="last 14 days"
+          sparkline={travelAgent.sessions14dHistory}
+          formatValue={(v) => v.toLocaleString()}
         />
         <KPITile
           label="Latency (P95)"
@@ -51,9 +53,9 @@ export function ProjectHome() {
           formatValue={(v) => `$${v.toFixed(3)}`}
         />
         <KPITile
-          label="Eval cost MTD"
+          label="Eval cost"
           value={`$${travelAgent.evalCostMTD.toFixed(2)}`}
-          sublabel="5% of API spend"
+          sublabel="month-to-date · 5% of API spend"
         />
       </section>
 

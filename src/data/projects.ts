@@ -19,6 +19,11 @@ const latencyP95History = latencyP95Series.map((value, i) => ({ day: dayOffset(i
 const sessionCostP95Series = [0.038, 0.039, 0.038, 0.04, 0.039, 0.038, 0.04, 0.039, 0.041, 0.04, 0.039, 0.042, 0.043, 0.045];
 const sessionCostP95History = sessionCostP95Series.map((value, i) => ({ day: dayOffset(i), value }));
 
+// Daily session count over 14d. Sums to ~2,847 (cumulative shown in the KPI).
+// Weekday bias: weekends slightly lower volume; mild growth trend overall.
+const sessionsDailySeries = [180, 185, 195, 178, 198, 210, 195, 188, 215, 202, 218, 208, 225, 250];
+const sessions14dHistory = sessionsDailySeries.map((value, i) => ({ day: dayOffset(i), value }));
+
 export const travelAgent: Project = {
   id: 'travel-agent',
   name: 'travel-agent',
@@ -27,6 +32,7 @@ export const travelAgent: Project = {
   passRateHistory,
   tracesSampled14d: 12431,
   sessions14d: 2847,
+  sessions14dHistory,
   evalCostMTD: 4.2,
   clusterCount: 3,
   latencyP95Ms14d: 2400,
