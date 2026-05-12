@@ -18,8 +18,8 @@ export function ProjectHome() {
       {/* Band 2: health KPIs */}
       <section className="grid grid-cols-4 gap-4">
         <KPITile
-          label="Pass rate"
-          value={`${Math.round(travelAgent.passRate14d * 100)}%`}
+          label="Session pass rate"
+          value={`${Math.round(travelAgent.sessionPassRate14d * 100)}%`}
           sublabel="last 14 days"
           sparkline={travelAgent.passRateHistory}
         />

@@ -12,9 +12,10 @@ export const travelAgent: Project = {
   id: 'travel-agent',
   name: 'travel-agent',
   type: 'managed',
-  passRate14d: 0.87,
+  sessionPassRate14d: 0.87,
   passRateHistory,
   tracesSampled14d: 12431,
+  sessions14d: 2847,
   evalCostMTD: 4.2,
   clusterCount: 3,
 };

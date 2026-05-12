@@ -93,9 +93,16 @@ export type Project = {
   id: string;
   name: string;
   type: 'managed' | 'self-hosted';
-  passRate14d: number;
+  // Renamed from passRate14d to clarify scope: this is computed at the session
+  // level (a session passes if its task-completion verdict passes), not the
+  // per-trace level. The two diverge because a single failed turn doesn't
+  // always sink the whole session.
+  sessionPassRate14d: number;
   passRateHistory: { day: string; rate: number }[];
+  // Total sampled traces (per-turn API calls) across all sessions in 14d.
+  // Different from sessions14d, which counts distinct conversations.
   tracesSampled14d: number;
+  sessions14d: number;
   evalCostMTD: number;
   clusterCount: number;
 };

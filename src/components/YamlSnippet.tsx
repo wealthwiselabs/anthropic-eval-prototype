@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
 
-// Lazy-loads Shiki only when the user actually opens a CI preview, so the
+// Lazy-loads Shiki only when the user actually opens a snippet preview, so the
 // initial bundle stays slim. Falls back to a plain <pre> while Shiki loads.
-// Supports yaml + bash because the CI page renders both.
-type Lang = 'yaml' | 'bash';
+// Langs are limited to the ones we actually render so the highlighter only
+// pulls grammars we need.
+type Lang = 'yaml' | 'bash' | 'python' | 'typescript';
 
 type Props = { code: string; lang?: Lang };
 
@@ -12,12 +13,15 @@ export function YamlSnippet({ code, lang = 'yaml' }: Props) {
 
   useEffect(() => {
     let cancelled = false;
+    // Reset on lang/code change so the user doesn't see stale highlighted HTML
+    // from a previous tab flash through before the new one resolves.
+    setHtml(null);
     (async () => {
       try {
         const shiki = await import('shiki');
         const highlighter = await shiki.createHighlighter({
           themes: ['github-light'],
-          langs: ['yaml', 'bash'],
+          langs: ['yaml', 'bash', 'python', 'typescript'],
         });
         if (cancelled) return;
         const out = highlighter.codeToHtml(code, { lang, theme: 'github-light' });
