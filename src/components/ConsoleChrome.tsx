@@ -8,9 +8,9 @@ import { Toast } from './Toast';
 // header variants — every Evals route shares the same product-title bar.
 export function ConsoleChrome({ children }: { children: ReactNode }) {
   return (
-    <div className="flex h-full min-h-screen w-full bg-canvas">
+    <div className="min-h-screen w-full bg-canvas">
       <LeftNav />
-      <main className="flex-1 flex flex-col min-w-0 relative">
+      <main className="ml-60 flex flex-col min-w-0 relative min-h-screen">
         <header className="h-12 flex items-center px-6 border-b border-border bg-chrome">
           <span className="font-serif text-[15px] text-ink">Evals</span>
         </header>

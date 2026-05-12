@@ -17,7 +17,7 @@ import {
 // M1 Agent Builder prototype so the two demos feel like one product.
 export function LeftNav() {
   return (
-    <aside className="w-60 shrink-0 border-r border-border bg-chrome flex flex-col h-screen sticky top-0">
+    <aside className="w-60 shrink-0 border-r border-border bg-chrome flex flex-col h-screen fixed top-0 left-0 overflow-y-auto z-30">
       <div className="px-5 pt-5 pb-3">
         <div className="font-serif text-[19px] tracking-tight text-ink">
           Claude Console
