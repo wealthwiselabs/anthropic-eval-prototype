@@ -345,7 +345,7 @@ export function EditJudgeModal({ open, onClose, judge }: Props) {
                 type="button"
                 onClick={handleRunTest}
                 disabled={!selectedSampleId || running}
-                className="w-full px-3 py-2 text-sm bg-ink text-white rounded hover:bg-ink/90 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                className="w-full px-3 py-2 text-sm border border-ink/80 text-ink rounded hover:bg-ink hover:text-white transition-colors disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent disabled:hover:text-ink"
               >
                 {running ? 'Running…' : 'Run test'}
               </button>
