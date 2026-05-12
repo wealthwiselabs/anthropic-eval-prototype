@@ -204,7 +204,7 @@ export function Settings() {
           Trace bodies are retained for this long. Judge scores and clusters are retained
           indefinitely so historical regression baselines never expire.
         </p>
-        <div className="mt-4 flex items-center gap-2">
+        <div className="mt-4 inline-flex p-0.5 bg-canvas border border-border rounded gap-0.5 w-fit">
           {RETENTION_OPTIONS.map((d) => {
             const selected = retentionDays === d;
             return (
@@ -212,10 +212,10 @@ export function Settings() {
                 key={d}
                 onClick={() => setRetentionDays(d)}
                 className={
-                  'px-3 py-1.5 text-sm rounded border transition-colors ' +
+                  'px-3 py-1 text-sm rounded transition-colors ' +
                   (selected
-                    ? 'border-coral bg-coral/5 text-ink'
-                    : 'border-border bg-white text-ink/70 hover:bg-canvas')
+                    ? 'bg-white text-ink shadow-sm'
+                    : 'text-muted hover:text-ink')
                 }
               >
                 {d} days

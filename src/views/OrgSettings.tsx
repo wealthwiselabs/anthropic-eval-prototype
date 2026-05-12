@@ -110,7 +110,7 @@ export function OrgSettings() {
         <p className="text-sm text-muted mt-1 max-w-2xl">
           Trace bodies retention default for new projects. Projects can override this per-project.
         </p>
-        <div className="mt-4 flex items-center gap-2">
+        <div className="mt-4 inline-flex p-0.5 bg-canvas border border-border rounded gap-0.5 w-fit">
           {RETENTION_OPTIONS.map((d) => {
             const selected = orgDefaultRetentionDays === d;
             return (
@@ -118,10 +118,10 @@ export function OrgSettings() {
                 key={d}
                 onClick={() => setOrgDefaultRetentionDays(d)}
                 className={
-                  'px-3 py-1.5 text-sm rounded border transition-colors ' +
+                  'px-3 py-1 text-sm rounded transition-colors ' +
                   (selected
-                    ? 'border-coral bg-coral/5 text-ink'
-                    : 'border-border bg-white text-ink/70 hover:bg-canvas')
+                    ? 'bg-white text-ink shadow-sm'
+                    : 'text-muted hover:text-ink')
                 }
               >
                 {d} days
