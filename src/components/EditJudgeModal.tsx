@@ -230,15 +230,15 @@ export function EditJudgeModal({ open, onClose, judge }: Props) {
             {/* Output type */}
             <div className="flex flex-col gap-1">
               <span className="text-xs uppercase tracking-wide text-muted">Output type</span>
-              <div className="inline-flex border border-border rounded overflow-hidden w-fit">
+              <div className="inline-flex p-0.5 bg-canvas border border-border rounded gap-0.5 w-fit">
                 <button
                   type="button"
                   onClick={() => setOutputType('binary')}
                   className={
-                    'px-3 py-1.5 text-sm transition-colors ' +
+                    'px-3 py-1 text-sm rounded transition-colors ' +
                     (outputType === 'binary'
-                      ? 'bg-ink text-white'
-                      : 'bg-white text-ink/70 hover:bg-canvas')
+                      ? 'bg-white text-ink shadow-sm'
+                      : 'text-muted hover:text-ink')
                   }
                 >
                   Binary
@@ -247,7 +247,7 @@ export function EditJudgeModal({ open, onClose, judge }: Props) {
                   type="button"
                   disabled
                   title="Coming soon"
-                  className="px-3 py-1.5 text-sm bg-white text-ink/40 cursor-not-allowed border-l border-border"
+                  className="px-3 py-1 text-sm rounded text-ink/40 cursor-not-allowed"
                 >
                   Score (1–5)
                 </button>
@@ -255,7 +255,7 @@ export function EditJudgeModal({ open, onClose, judge }: Props) {
                   type="button"
                   disabled
                   title="Coming soon"
-                  className="px-3 py-1.5 text-sm bg-white text-ink/40 cursor-not-allowed border-l border-border"
+                  className="px-3 py-1 text-sm rounded text-ink/40 cursor-not-allowed"
                 >
                   Categorical
                 </button>
@@ -280,15 +280,15 @@ export function EditJudgeModal({ open, onClose, judge }: Props) {
             {/* Scope */}
             <div className="flex flex-col gap-1">
               <span className="text-xs uppercase tracking-wide text-muted">Scope</span>
-              <div className="inline-flex border border-border rounded overflow-hidden w-fit">
+              <div className="inline-flex p-0.5 bg-canvas border border-border rounded gap-0.5 w-fit">
                 <button
                   type="button"
                   onClick={() => setScope('turn')}
                   className={
-                    'px-3 py-1.5 text-sm transition-colors ' +
+                    'px-3 py-1 text-sm rounded transition-colors ' +
                     (scope === 'turn'
-                      ? 'bg-ink text-white'
-                      : 'bg-white text-ink/70 hover:bg-canvas')
+                      ? 'bg-white text-ink shadow-sm'
+                      : 'text-muted hover:text-ink')
                   }
                 >
                   Per-trace
@@ -297,10 +297,10 @@ export function EditJudgeModal({ open, onClose, judge }: Props) {
                   type="button"
                   onClick={() => setScope('session')}
                   className={
-                    'px-3 py-1.5 text-sm transition-colors border-l border-border ' +
+                    'px-3 py-1 text-sm rounded transition-colors ' +
                     (scope === 'session'
-                      ? 'bg-ink text-white'
-                      : 'bg-white text-ink/70 hover:bg-canvas')
+                      ? 'bg-white text-ink shadow-sm'
+                      : 'text-muted hover:text-ink')
                   }
                 >
                   Per-session
